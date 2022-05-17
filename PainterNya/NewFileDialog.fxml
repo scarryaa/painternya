@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="PainterNya.NewFileDialogController"
+            prefHeight="400.0" prefWidth="600.0">
+
+    <center>
+        <HBox>
+            <TextField fx:id="fileWidth" text="800"/>
+            <TextField fx:id="fileHeight" text="600"/>
+            <Button fx:id="okButton" onAction="#onOK" text="OK"/>
+            <Button fx:id="cancelButton" onAction="#onCancel" text="Cancel"/>
+        </HBox>
+    </center>
+
+</BorderPane>
