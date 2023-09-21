@@ -10,6 +10,7 @@ namespace painternya.Controls
     public partial class Canvas : UserControl
     {
         private const int TileSize = 128;
+        
         private CanvasViewModel ViewModel { get; set; }
         
         public Canvas()
@@ -17,7 +18,7 @@ namespace painternya.Controls
             InitializeComponent();
             ViewModel = new CanvasViewModel(1024, 1024);
             DataContext = ViewModel;
-            this.ViewModel.InvalidateRequested += InvalidateCanvas;
+            ViewModel.InvalidateRequested += InvalidateCanvas;
         }
 
         public override void Render(DrawingContext context)

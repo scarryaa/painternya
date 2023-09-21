@@ -8,6 +8,9 @@
              x:Class="painternya.Controls.Canvas" 
              x:DataType="viewModels:CanvasViewModel"
              behaviors:PointerMovedBehavior.Command="{Binding PointerMovedCommand}"
-             x:Name="MainCanvas">
+             behaviors:PointerPressedBehavior.Command="{Binding PointerPressedCommand}"
+             x:Name="MainCanvas"
+             Width="{Binding CanvasWidth}" Height="{Binding CanvasHeight}"
+             RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapInterpolationMode="None" RenderOptions.TextRenderingMode="Alias">
     
 </UserControl>

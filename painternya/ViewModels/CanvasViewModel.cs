@@ -16,19 +16,24 @@ namespace painternya.ViewModels
     {
         private const int TileSize = 128;
         private Tile[,] tiles;
+        private Point lastPoint;
         public int TilesX => tiles.GetLength(0);
         public int TilesY => tiles.GetLength(1);
+        public int CanvasHeight { get; set; } = 1024;
+        public int CanvasWidth { get; set; } = 1024;
         public ICommand PointerMovedCommand { get; set; }
+        public ICommand PointerPressedCommand { get; set; }
         public event Action InvalidateRequested;
         
-        public CanvasViewModel()
-        {
-            
-        }
+        public CanvasViewModel() {}
         
         public CanvasViewModel(int canvasWidth, int canvasHeight)
         {
             PointerMovedCommand = ReactiveCommand.Create<Point>(HandlePointerMoved);
+            PointerPressedCommand = ReactiveCommand.Create<Point>(HandlePointerPressed);
+            
+            CanvasWidth = canvasWidth;
+            CanvasHeight = canvasHeight;
             
             int tilesX = canvasWidth / TileSize;
             int tilesY = canvasHeight / TileSize;
@@ -61,11 +66,62 @@ namespace painternya.ViewModels
         {
             return tiles[x, y];
         }
-        
-        private void HandlePointerMoved(Point currentPosition)
+
+        private void HandlePointerPressed(Point point)
         {
-            var point = currentPosition;
-            SetPixel((int)point.X, (int)point.Y, Colors.Red);
+            DrawPixel(point, Colors.Red);
+            lastPoint = point;
+        }
+        
+        private void HandlePointerMoved(Point point)
+        {
+            DrawLine(lastPoint, point, Colors.Red);
+            lastPoint = point;
+        }
+
+        private void DrawLine(Point startingPoint, Point endingPoint, Color color)
+        {
+            int x1 = (int)startingPoint.X;
+            int y1 = (int)startingPoint.Y;
+            int x2 = (int)endingPoint.X;
+            int y2 = (int)endingPoint.Y;
+
+            int dx = Math.Abs(x2 - x1);
+            int dy = Math.Abs(y2 - y1);
+
+            int sx = x1 < x2 ? 1 : -1;
+            int sy = y1 < y2 ? 1 : -1;
+
+            int err = dx - dy;
+
+            while (true)
+            {
+                SetPixel(x1, y1, color);
+
+                if (x1 == x2 && y1 == y2) break;
+
+                int e2 = 2 * err;
+
+                if (e2 > -dy)
+                {
+                    err -= dy;
+                    x1 += sx;
+                }
+
+                if (e2 < dx)
+                {
+                    err += dx;
+                    y1 += sy;
+                }
+            }
+            
+            InvalidateRequested?.Invoke();
+        }
+
+
+        private void DrawPixel(Point point, Color color)
+        {
+            SetPixel((int)point.X, (int)point.Y, color);
             
             int tileX = (int)point.X / TileSize;
             int tileY = (int)point.Y / TileSize;

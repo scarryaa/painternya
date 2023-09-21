@@ -15,6 +15,10 @@
     <Design.DataContext>
         <viewModels:MainWindowViewModel/>
     </Design.DataContext>
-
-    <controls:Canvas Background="Transparent"></controls:Canvas>
+    
+    <ScrollViewer>
+        <Viewbox>
+            <controls:Canvas></controls:Canvas>
+        </Viewbox>
+    </ScrollViewer>
 </Window>
