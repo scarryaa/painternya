@@ -3,6 +3,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="painternya.Controls.Canvas" PointerMoved="InputElement_OnPointerMoved">
+             xmlns:behaviors="clr-namespace:painternya.Behaviors"
+             xmlns:viewModels="clr-namespace:painternya.ViewModels"
+             x:Class="painternya.Controls.Canvas" 
+             x:DataType="viewModels:CanvasViewModel"
+             behaviors:PointerMovedBehavior.Command="{Binding PointerMovedCommand}"
+             x:Name="MainCanvas">
     
 </UserControl>

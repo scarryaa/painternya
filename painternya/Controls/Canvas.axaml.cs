@@ -17,6 +17,7 @@ namespace painternya.Controls
             InitializeComponent();
             ViewModel = new CanvasViewModel(1024, 1024);
             DataContext = ViewModel;
+            this.ViewModel.InvalidateRequested += InvalidateCanvas;
         }
 
         public override void Render(DrawingContext context)
@@ -38,53 +39,10 @@ namespace painternya.Controls
                 }
             }
         }
-
-
-        private void InputElement_OnPointerMoved(object? sender, PointerEventArgs e)
-        {
-            if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
-            {
-                var point = e.GetPosition(this);
-                ViewModel.SetPixel((int)point.X, (int)point.Y, Colors.Red);
-                
-                int tileX = (int)point.X / TileSize;
-                int tileY = (int)point.Y / TileSize;
         
-                MarkTileAsDirty(tileX, tileY);
-
-                // If the drawing point is close to the tile edge, 
-                // we'll mark neighboring tiles as dirty too.
-                int pixelOffsetX = (int)point.X % TileSize;
-                int pixelOffsetY = (int)point.Y % TileSize;
-        
-                if (pixelOffsetX < 2)
-                {
-                    MarkTileAsDirty(tileX - 1, tileY);
-                }
-                if (pixelOffsetX > TileSize - 2)
-                {
-                    MarkTileAsDirty(tileX + 1, tileY);
-                }
-                if (pixelOffsetY < 2)
-                {
-                    MarkTileAsDirty(tileX, tileY - 1);
-                }
-                if (pixelOffsetY > TileSize - 2)
-                {
-                    MarkTileAsDirty(tileX, tileY + 1);
-                }
-
-                InvalidateVisual();
-            }
-        }
-
-        private void MarkTileAsDirty(int x, int y)
+        private void InvalidateCanvas()
         {
-            if (x >= 0 && x < ViewModel.TilesX && y >= 0 && y < ViewModel.TilesY)
-            {
-                ViewModel.GetTile(x, y).Dirty = true;
-            }
+            InvalidateVisual();
         }
-
     }
 }
