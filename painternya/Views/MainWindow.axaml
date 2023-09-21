@@ -7,18 +7,68 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="painternya.Views.MainWindow"
         xmlns:controls="clr-namespace:painternya.Controls"
+        xmlns:avalonia="https://github.com/projektanker/icons.avalonia"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Width="500" Height="400"
-        Title="painternya" Background="White">
+        Title="painternya">
 
     <Design.DataContext>
         <viewModels:MainWindowViewModel/>
     </Design.DataContext>
     
-    <ScrollViewer>
-        <Viewbox>
-            <controls:Canvas></controls:Canvas>
-        </Viewbox>
-    </ScrollViewer>
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" ColumnDefinitions="Auto,*">
+        <!-- Top File Menu -->
+        <Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+            <MenuItem Header="File">
+                <MenuItem Header="New" Command="{Binding NewCommand}"/>
+                <MenuItem Header="Open" Command="{Binding OpenCommand}"/>
+                <MenuItem Header="Save" Command="{Binding SaveCommand}"/>
+                <MenuItem Header="Save As" Command="{Binding SaveAsCommand}"/>
+                <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>
+            </MenuItem>
+            <MenuItem Header="Edit">
+                <MenuItem Header="Undo" Command="{Binding UndoCommand}"/>
+                <MenuItem Header="Redo" Command="{Binding RedoCommand}"/>
+                <MenuItem Header="Cut" Command="{Binding CutCommand}"/>
+                <MenuItem Header="Copy" Command="{Binding CopyCommand}"/>
+                <MenuItem Header="Paste" Command="{Binding PasteCommand}"/>
+                <MenuItem Header="Delete" Command="{Binding DeleteCommand}"/>
+                <MenuItem Header="Select All" Command="{Binding SelectAllCommand}"/>
+            </MenuItem>
+        </Menu>
+        
+        <!-- Top bar -->
+        <StackPanel Height="35" Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" x:Name="TopToolBar">
+            <Button Height="35" Width="35" Command="{Binding NewCommand}" Content="New" avalonia:Attached.Icon="fa-solid fa-file"/>
+            <Button Height="35" Width="35" Command="{Binding OpenCommand}" Content="Open" avalonia:Attached.Icon="fa-solid fa-folder-open"/>
+            <Button Height="35" Width="35" Command="{Binding SaveCommand}" Content="Save" avalonia:Attached.Icon="fa-solid fa-floppy-disk"/>
+            <Button Height="35" Width="35" Command="{Binding SaveAsCommand}" Content="Save As" avalonia:Attached.Icon="fa-solid fa-file-export"/>
+            <Button Height="35" Width="35" Command="{Binding UndoCommand}" Content="Undo" avalonia:Attached.Icon="fa-solid fa-rotate-left"/>
+            <Button Height="35" Width="35" Command="{Binding RedoCommand}" Content="Redo" avalonia:Attached.Icon="fa-solid fa-rotate-right"/>
+            <Button Height="35" Width="35" Command="{Binding CutCommand}" Content="Cut" avalonia:Attached.Icon="fa-solid fa-scissors"/>
+            <Button Height="35" Width="35" Command="{Binding CopyCommand}" Content="Copy" avalonia:Attached.Icon="fa-solid fa-copy"/>
+            <Button Height="35" Width="35" Command="{Binding PasteCommand}" Content="Paste" avalonia:Attached.Icon="fa-solid fa-clipboard"/>
+            <Button Height="35" Width="35" Command="{Binding DeleteCommand}" Content="Delete" avalonia:Attached.Icon="fa-solid fa-xmark"/>
+            <Button Height="35" Width="35" Command="{Binding SelectAllCommand}" Content="Select All" avalonia:Attached.Icon="fa-solid fa-object-group"/>
+        </StackPanel>
+        
+        <!-- Left bar -->
+        <StackPanel Width="35" Orientation="Vertical" Grid.Row="3" Grid.Column="0">
+            <Button Width="35" Height="35" avalonia:Attached.Icon="fa-solid fa-paintbrush" Command="{Binding SelectBrushCommand}"/>
+            <Button Width="35" Height="35" avalonia:Attached.Icon="fa-solid fa-eraser" Command="{Binding SelectEraserCommand}"/>
+            <Button Width="35" Height="35" avalonia:Attached.Icon="fa-regular fa-square" Command="{Binding SelectSelectionCommand}"/>
+            <Button Width="35" Height="35" avalonia:Attached.Icon="fa-solid fa-up-down-left-right" Command="{Binding SelectMoveCommand}"/>
+        </StackPanel>
+        
+        <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Grid.Row="3" Grid.Column="1" Background="Gray">
+            <Viewbox Stretch="None">
+                <controls:Canvas></controls:Canvas>
+            </Viewbox>
+        </ScrollViewer>
+        
+        <!-- Bottom bar -->
+        <StackPanel Height="35" Orientation="Horizontal" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2">
+        </StackPanel>
+    </Grid>
 </Window>

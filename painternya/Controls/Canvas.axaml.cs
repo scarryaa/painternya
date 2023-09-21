@@ -30,13 +30,12 @@ namespace painternya.Controls
                 for (int y = 0; y < ViewModel.TilesY; y++)
                 {
                     var tile = ViewModel.GetTile(x, y);
+                    
                     if (tile.Dirty)
                     {
-                        tile.Dirty = false;
+                        var destRect = new Rect(x * TileSize, y * TileSize, TileSize, TileSize);
+                        context.DrawImage(tile.Bitmap, sourceRect: new Rect(0, 0, TileSize, TileSize), destRect: destRect);
                     }
-
-                    var destRect = new Rect(x * TileSize, y * TileSize, TileSize, TileSize);
-                    context.DrawImage(tile.Bitmap, sourceRect: new Rect(0, 0, TileSize, TileSize), destRect: destRect);
                 }
             }
         }
