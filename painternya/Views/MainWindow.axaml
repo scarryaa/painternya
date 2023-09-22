@@ -62,7 +62,7 @@
         
         <!-- Left bar -->
         <StackPanel Width="35" Orientation="Vertical" Grid.Row="3" Grid.Column="0">
-            <Button Width="35" Height="35" avalonia:Attached.Icon="fa-solid fa-paintbrush" Command="{Binding SelectToolCommand}" CommandParameter="Brush"/>
+            <Button Width="35" Height="35" avalonia:Attached.Icon="fa-solid fa-pencil" Command="{Binding SelectToolCommand}" CommandParameter="Pencil"/>
             <Button Width="35" Height="35" avalonia:Attached.Icon="fa-solid fa-eraser" Command="{Binding SelectToolCommand}" CommandParameter="Eraser"/>
             <Button Width="35" Height="35" avalonia:Attached.Icon="fa-regular fa-square"/>
             <Button Width="35" Height="35" avalonia:Attached.Icon="fa-solid fa-up-down-left-right"/>
