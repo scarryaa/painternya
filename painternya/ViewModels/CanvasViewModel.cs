@@ -9,6 +9,7 @@ using Avalonia.Media;
 using Avalonia.ReactiveUI;
 using painternya.Interfaces;
 using painternya.Models;
+using painternya.Tools;
 using ReactiveUI;
 using DrawingContext = painternya.Models.DrawingContext;
 
@@ -24,11 +25,25 @@ namespace painternya.ViewModels
         private readonly DrawingContext _drawingContext;
         private double _offsetX;
         private double _offsetY;
+        private ITool _currentTool = new PencilTool();
         
         public DrawingContext DrawingContext => _drawingContext;
         
         public int TilesX => _drawingContext.TilesX;
         public int TilesY => _drawingContext.TilesY;
+        
+        public ITool CurrentTool
+        {
+            get => _currentTool;
+            set
+            {
+                if (_currentTool != value)
+                {
+                    _currentTool = value;
+                    this.RaisePropertyChanged();
+                }
+            }
+        }
         
         public int CanvasWidth
         {
@@ -102,13 +117,13 @@ namespace painternya.ViewModels
 
         private void HandlePointerPressed(Point point)
         {
-            _drawingContext.DrawPixel(point, Colors.Red);
+            _currentTool.OnPointerPressed(_drawingContext, point);
             _lastPoint = point;
         }
         
         private void HandlePointerMoved(Point point)
         {
-            _drawingContext.DrawLine(_lastPoint, point, Colors.Red);
+            _currentTool.OnPointerMoved(_drawingContext, point);
             _lastPoint = point;
         }
     }
