@@ -15,12 +15,14 @@ namespace painternya.ViewModels
     public class CanvasViewModel : ViewModelBase
     {
         private const int TileSize = 128;
-        private Tile[,] tiles;
+        private Tile[,] _tiles;
         private Point lastPoint;
-        public int TilesX => tiles.GetLength(0);
-        public int TilesY => tiles.GetLength(1);
+        public int TilesX => _tiles.GetLength(0);
+        public int TilesY => _tiles.GetLength(1);
         public int CanvasHeight { get; set; } = 1024;
         public int CanvasWidth { get; set; } = 1024;
+        public double HorizontalOffset { get; set; }
+        public double VerticalOffset { get; set; }
         public ICommand PointerMovedCommand { get; set; }
         public ICommand PointerPressedCommand { get; set; }
         public event Action InvalidateRequested;
@@ -37,7 +39,7 @@ namespace painternya.ViewModels
             
             int tilesX = canvasWidth / TileSize;
             int tilesY = canvasHeight / TileSize;
-            tiles = new Tile[tilesX, tilesY];
+            _tiles = new Tile[tilesX, tilesY];
 
             for (int x = 0; x < tilesX; x++)
             {
@@ -46,16 +48,16 @@ namespace painternya.ViewModels
                     // Set every odd tile to white and every even tile to black
                     if ((x + y) % 2 == 0)
                     {
-                        tiles[x, y] = new Tile(TileSize, TileSize);
-                        tiles[x, y].Bitmap.Clear(Colors.White);
+                        _tiles[x, y] = new Tile(TileSize, TileSize);
+                        _tiles[x, y].Bitmap.Clear(Colors.White);
                     }
                     else
                     {
-                        tiles[x, y] = new Tile(TileSize, TileSize);
-                        tiles[x, y].Bitmap.Clear(Colors.Black);
+                        _tiles[x, y] = new Tile(TileSize, TileSize);
+                        _tiles[x, y].Bitmap.Clear(Colors.Black);
                     }
                     
-                    tiles[x, y].Dirty = true;
+                    _tiles[x, y].Dirty = true;
                     
                     // tiles[x, y] = new Tile(TileSize, TileSize);
                 }
@@ -64,8 +66,30 @@ namespace painternya.ViewModels
         
         public Tile GetTile(int x, int y)
         {
-            return tiles[x, y];
+            return _tiles[x, y];
         }
+        
+        public void UpdateTileVisibilities()
+        {
+            for (int x = 0; x < TilesX; x++)
+            {
+                for (int y = 0; y < TilesY; y++)
+                {
+                    var tile = GetTile(x, y);
+                    tile.IsVisible = IsTileVisible(x, y);
+                }
+            }
+            InvalidateRequested?.Invoke();
+        }
+        
+        private bool IsTileVisible(int x, int y)
+        {
+            var tileRect = new Rect(x * TileSize, y * TileSize, TileSize, TileSize);
+            var visibleRect = new Rect(HorizontalOffset, VerticalOffset, CanvasWidth, CanvasHeight);
+
+            return tileRect.Intersects(visibleRect);
+        }
+
 
         private void HandlePointerPressed(Point point)
         {
@@ -175,8 +199,8 @@ namespace painternya.ViewModels
                 return;
             }
     
-            tiles[tileX, tileY].Bitmap.SetPixel(pixelX, pixelY, color);
-            tiles[tileX, tileY].Dirty = true;
+            _tiles[tileX, tileY].Bitmap.SetPixel(pixelX, pixelY, color);
+            _tiles[tileX, tileY].Dirty = true;
         }
     }
 }

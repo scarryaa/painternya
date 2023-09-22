@@ -10,32 +10,63 @@ namespace painternya.Controls
     public partial class Canvas : UserControl
     {
         private const int TileSize = 128;
+        private int _canvasWidth;
+        private int _canvasHeight;
         
-        private CanvasViewModel ViewModel { get; set; }
+        public CanvasViewModel ViewModel { get; set; }
+        
+        public static readonly DirectProperty<Canvas, int> CanvasWidthProperty =
+            AvaloniaProperty.RegisterDirect<Canvas, int>("CanvasWidth", o => o.CanvasWidth, (o, v) => o.CanvasWidth = v);
+        
+        public int CanvasWidth
+        {
+            get => _canvasWidth;
+            set => SetAndRaise(CanvasWidthProperty, ref _canvasWidth, value);
+        }
+        
+        public static readonly DirectProperty<Canvas, int> CanvasHeightProperty =
+            AvaloniaProperty.RegisterDirect<Canvas, int>("CanvasHeight", o => o.CanvasHeight, (o, v) => o.CanvasHeight = v);
+        
+        public int CanvasHeight
+        {
+            get => _canvasHeight;
+            set => SetAndRaise(CanvasHeightProperty, ref _canvasHeight, value);
+        }
         
         public Canvas()
         {
+            DataContextChanged += OnDataContextChanged;
             InitializeComponent();
-            ViewModel = new CanvasViewModel(1024, 1024);
-            DataContext = ViewModel;
-            ViewModel.InvalidateRequested += InvalidateCanvas;
+        }
+
+        private void OnDataContextChanged(object? sender, EventArgs e)
+        {
+            if (DataContext is CanvasViewModel oldViewModel)
+            {
+                oldViewModel.InvalidateRequested -= InvalidateCanvas;
+            }
+            
+            if (DataContext is CanvasViewModel newViewModel)
+            {
+                newViewModel.InvalidateRequested += InvalidateCanvas;
+                ViewModel = newViewModel;
+            }
         }
 
         public override void Render(DrawingContext context)
         {
             base.Render(context);
-
-            for (int x = 0; x < ViewModel.TilesX; x++)
+            
+            for (var x = 0; x < ViewModel.TilesX; x++)
             {
-                for (int y = 0; y < ViewModel.TilesY; y++)
+                for (var y = 0; y < ViewModel.TilesY; y++)
                 {
                     var tile = ViewModel.GetTile(x, y);
+
+                    if (tile is not { Dirty: true, IsVisible: true }) continue;
                     
-                    if (tile.Dirty)
-                    {
-                        var destRect = new Rect(x * TileSize, y * TileSize, TileSize, TileSize);
-                        context.DrawImage(tile.Bitmap, sourceRect: new Rect(0, 0, TileSize, TileSize), destRect: destRect);
-                    }
+                    var destRect = new Rect(x * TileSize, y * TileSize, TileSize, TileSize);
+                    context.DrawImage(tile.Bitmap, sourceRect: new Rect(0, 0, TileSize, TileSize), destRect: destRect);
                 }
             }
         }

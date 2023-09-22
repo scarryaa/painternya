@@ -1,10 +1,13 @@
-﻿using System.Windows.Input;
+﻿using System;
+using System.Windows.Input;
+using Avalonia.Controls;
 using ReactiveUI;
 
 namespace painternya.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
+    public CanvasViewModel CanvasVM { get; set; } = new CanvasViewModel(5000, 5000);
     public ICommand NewCommand { get; set; }
     public ICommand OpenCommand { get; set; }
     public ICommand SaveCommand { get; set; }
@@ -22,6 +25,7 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand SelectEraserCommand { get; set; }
     public ICommand SelectSelectionCommand { get; set; }
     public ICommand SelectMoveCommand { get; set; }
+    public ICommand ScrolledCommand { get; set; }
 
     public MainWindowViewModel()
     {
@@ -42,6 +46,17 @@ public class MainWindowViewModel : ViewModelBase
         SelectEraserCommand = ReactiveCommand.Create(SelectEraser);
         SelectSelectionCommand = ReactiveCommand.Create(SelectSelection);
         SelectMoveCommand = ReactiveCommand.Create(SelectMove);
+        ScrolledCommand = ReactiveCommand.Create<object>(Scrolled);
+    }
+
+    private void Scrolled(object sender)
+    {
+        var scrollViewer = sender as ScrollViewer;
+        if (scrollViewer == null) return;
+
+        CanvasVM.HorizontalOffset = scrollViewer.Offset.X;
+        CanvasVM.VerticalOffset = scrollViewer.Offset.Y;
+        CanvasVM.UpdateTileVisibilities();
     }
 
     private void New()

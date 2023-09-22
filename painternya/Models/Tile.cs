@@ -10,6 +10,7 @@ public class Tile
 {
     public WriteableBitmap Bitmap { get; }
     public bool Dirty { get; set; }
+    public bool IsVisible { get; set; }
     
     public Tile(int width, int height)
     {
@@ -24,6 +25,8 @@ public class Tile
                 }
             }
         }
+        
+        IsVisible = false;
         Dirty = true;
     }
 }

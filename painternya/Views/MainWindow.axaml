@@ -8,10 +8,12 @@
         x:Class="painternya.Views.MainWindow"
         xmlns:controls="clr-namespace:painternya.Controls"
         xmlns:avalonia="https://github.com/projektanker/icons.avalonia"
+        xmlns:behaviors="clr-namespace:painternya.Behaviors"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Width="500" Height="400"
-        Title="painternya">
+        Width="800" Height="700"
+        Title="painternya"
+        WindowStartupLocation="CenterScreen">
 
     <Design.DataContext>
         <viewModels:MainWindowViewModel/>
@@ -53,6 +55,11 @@
             <Button Height="35" Width="35" Command="{Binding SelectAllCommand}" Content="Select All" avalonia:Attached.Icon="fa-solid fa-object-group"/>
         </StackPanel>
         
+        <!-- Top sub bar -->
+        <StackPanel Height="35" Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+            
+        </StackPanel>
+        
         <!-- Left bar -->
         <StackPanel Width="35" Orientation="Vertical" Grid.Row="3" Grid.Column="0">
             <Button Width="35" Height="35" avalonia:Attached.Icon="fa-solid fa-paintbrush" Command="{Binding SelectBrushCommand}"/>
@@ -61,9 +68,10 @@
             <Button Width="35" Height="35" avalonia:Attached.Icon="fa-solid fa-up-down-left-right" Command="{Binding SelectMoveCommand}"/>
         </StackPanel>
         
-        <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Grid.Row="3" Grid.Column="1" Background="Gray">
+        <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Grid.Row="3" Grid.Column="1" Background="Gray"
+                      behaviors:ScrolledBehavior.Command="{Binding ScrolledCommand}">
             <Viewbox Stretch="None">
-                <controls:Canvas></controls:Canvas>
+                <controls:Canvas CanvasWidth="1024" CanvasHeight="1024" DataContext="{Binding CanvasVM}"></controls:Canvas>
             </Viewbox>
         </ScrollViewer>
         
