@@ -18,6 +18,7 @@ public class MainWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _canvasVm, value);
     }
     
+    public ICommand SelectToolCommand { get; set; }
     public ICommand NewCommand { get; set; }
     public ICommand OpenCommand { get; set; }
     public ICommand SaveCommand { get; set; }
@@ -31,15 +32,12 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand DeleteCommand { get; set; }
     public ICommand SelectAllCommand { get; set; }
     
-    public ICommand SelectBrushCommand { get; set; }
-    public ICommand SelectEraserCommand { get; set; }
-    public ICommand SelectSelectionCommand { get; set; }
-    public ICommand SelectMoveCommand { get; set; }
     public ICommand ScrolledCommand { get; set; }
 
     public MainWindowViewModel(IDialogService dialogService)
     {   
         _dialogService = dialogService;
+        SelectToolCommand = ReactiveCommand.Create<string>(tool => CanvasVm?.SelectTool(tool));
         
         NewCommand = ReactiveCommand.Create(New);
         OpenCommand = ReactiveCommand.Create(Open);
@@ -54,10 +52,6 @@ public class MainWindowViewModel : ViewModelBase
         DeleteCommand = ReactiveCommand.Create(Delete);
         SelectAllCommand = ReactiveCommand.Create(SelectAll);
         
-        SelectBrushCommand = ReactiveCommand.Create(SelectBrush);
-        SelectEraserCommand = ReactiveCommand.Create(SelectEraser);
-        SelectSelectionCommand = ReactiveCommand.Create(SelectSelection);
-        SelectMoveCommand = ReactiveCommand.Create(SelectMove);
         ScrolledCommand = ReactiveCommand.Create<object>(Scrolled);
     }
 
@@ -140,26 +134,6 @@ public class MainWindowViewModel : ViewModelBase
     }
     
     private void SelectAll()
-    {
-        throw new System.NotImplementedException();
-    }
-    
-    private void SelectBrush()
-    {
-        throw new System.NotImplementedException();
-    }
-    
-    private void SelectEraser()
-    {
-        throw new System.NotImplementedException();
-    }
-    
-    private void SelectSelection()
-    {
-        throw new System.NotImplementedException();
-    }
-    
-    private void SelectMove()
     {
         throw new System.NotImplementedException();
     }

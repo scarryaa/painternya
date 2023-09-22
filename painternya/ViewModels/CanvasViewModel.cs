@@ -114,6 +114,48 @@ namespace painternya.ViewModels
                 .Subscribe(_ => InvalidateRequested?.Invoke());
 
         }
+        
+        public void SelectTool(string tool)
+        {
+            switch (tool)
+            {
+                case "Pencil":
+                    CurrentTool = new PencilTool();
+                    break;
+                case "Eraser":
+                    CurrentTool = new EraserTool();
+                    break;
+                // case "Fill":
+                //     CurrentTool = new FillTool();
+                //     break;
+                // case "Rectangle":
+                //     CurrentTool = new RectangleTool();
+                //     break;
+                // case "Ellipse":
+                //     CurrentTool = new EllipseTool();
+                //     break;
+                // case "Line":
+                //     CurrentTool = new LineTool();
+                //     break;
+                // case "Select":
+                //     CurrentTool = new SelectTool();
+                //     break;
+                // case "Move":
+                //     CurrentTool = new MoveTool();
+                //     break;
+                // case "Rotate":
+                //     CurrentTool = new RotateTool();
+                //     break;
+                // case "Scale":
+                //     CurrentTool = new ScaleTool();
+                //     break;
+                // case "Text":
+                //     CurrentTool = new TextTool();
+                //     break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(tool), tool, null);
+            }
+        }
 
         private void HandlePointerPressed(Point point)
         {

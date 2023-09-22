@@ -62,10 +62,10 @@
         
         <!-- Left bar -->
         <StackPanel Width="35" Orientation="Vertical" Grid.Row="3" Grid.Column="0">
-            <Button Width="35" Height="35" avalonia:Attached.Icon="fa-solid fa-paintbrush" Command="{Binding SelectBrushCommand}"/>
-            <Button Width="35" Height="35" avalonia:Attached.Icon="fa-solid fa-eraser" Command="{Binding SelectEraserCommand}"/>
-            <Button Width="35" Height="35" avalonia:Attached.Icon="fa-regular fa-square" Command="{Binding SelectSelectionCommand}"/>
-            <Button Width="35" Height="35" avalonia:Attached.Icon="fa-solid fa-up-down-left-right" Command="{Binding SelectMoveCommand}"/>
+            <Button Width="35" Height="35" avalonia:Attached.Icon="fa-solid fa-paintbrush" Command="{Binding SelectToolCommand}" CommandParameter="Brush"/>
+            <Button Width="35" Height="35" avalonia:Attached.Icon="fa-solid fa-eraser" Command="{Binding SelectToolCommand}" CommandParameter="Eraser"/>
+            <Button Width="35" Height="35" avalonia:Attached.Icon="fa-regular fa-square"/>
+            <Button Width="35" Height="35" avalonia:Attached.Icon="fa-solid fa-up-down-left-right"/>
         </StackPanel>
         
         <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Grid.Row="3" Grid.Column="1" Background="Gray"
