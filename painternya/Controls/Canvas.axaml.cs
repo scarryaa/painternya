@@ -48,14 +48,17 @@ namespace painternya.Controls
             
             if (DataContext is CanvasViewModel newViewModel)
             {
-                newViewModel.InvalidateRequested += InvalidateCanvas;
                 ViewModel = newViewModel;
+                newViewModel.InvalidateRequested += InvalidateCanvas;
+                InvalidateCanvas();
             }
         }
 
         public override void Render(DrawingContext context)
         {
             base.Render(context);
+            
+            if (ViewModel == null) return;
             
             for (var x = 0; x < ViewModel.TilesX; x++)
             {

@@ -1,13 +1,26 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
+using Avalonia;
 using Avalonia.Controls;
+using painternya.Interfaces;
+using painternya.Models;
+using painternya.Views;
 using ReactiveUI;
 
 namespace painternya.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
-    public CanvasViewModel CanvasVM { get; set; } = new CanvasViewModel(5000, 5000);
+    private readonly IDialogService _dialogService;
+    private CanvasViewModel _canvasVM;
+
+    public CanvasViewModel CanvasVM
+    {
+        get => _canvasVM;
+        set => this.RaiseAndSetIfChanged(ref _canvasVM, value);
+    }
+    
     public ICommand NewCommand { get; set; }
     public ICommand OpenCommand { get; set; }
     public ICommand SaveCommand { get; set; }
@@ -27,8 +40,10 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand SelectMoveCommand { get; set; }
     public ICommand ScrolledCommand { get; set; }
 
-    public MainWindowViewModel()
-    {
+    public MainWindowViewModel(IDialogService dialogService)
+    {   
+        _dialogService = dialogService;
+        
         NewCommand = ReactiveCommand.Create(New);
         OpenCommand = ReactiveCommand.Create(Open);
         SaveCommand = ReactiveCommand.Create(Save);
@@ -48,20 +63,33 @@ public class MainWindowViewModel : ViewModelBase
         SelectMoveCommand = ReactiveCommand.Create(SelectMove);
         ScrolledCommand = ReactiveCommand.Create<object>(Scrolled);
     }
+    
+    public async Task ShowNewCanvasDialogAsync()
+    {
+        var dialogViewModel = new NewCanvasDialogViewModel(_dialogService);
+        var result = await _dialogService.ShowDialog<CanvasCreationResult>(dialogViewModel);
 
+        if (result != null && result.Success)
+        {
+            CanvasVM = new CanvasViewModel(result.Width, result.Height);
+        }
+    }
+    
     private void Scrolled(object sender)
     {
         var scrollViewer = sender as ScrollViewer;
         if (scrollViewer == null) return;
 
+        if (CanvasVM == null) return;
+        
         CanvasVM.HorizontalOffset = scrollViewer.Offset.X;
         CanvasVM.VerticalOffset = scrollViewer.Offset.Y;
         CanvasVM.UpdateTileVisibilities();
     }
 
-    private void New()
+    private async Task New()
     {
-        throw new System.NotImplementedException();
+        await ShowNewCanvasDialogAsync();
     }
     
     private void Open()

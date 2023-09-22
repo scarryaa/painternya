@@ -1,0 +1,18 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:painternya.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="250" d:DesignHeight="200"
+        x:Class="painternya.Views.NewCanvasDialog"
+        Title="NewCanvasDialog"
+        Width="250" Height="200"
+        x:DataType="viewModels:NewCanvasDialogViewModel"
+        WindowStartupLocation="CenterOwner">
+
+        <StackPanel Margin="20">
+                <TextBox x:Name="WidthTextBox" Watermark="Width" Text="{Binding Width, Mode=TwoWay}"/>
+                <TextBox x:Name="HeightTextBox" Watermark="Height" Text="{Binding Height, Mode=TwoWay}"/>
+                <Button Content="Create" Command="{Binding CreateCanvasCommand}"/>
+        </StackPanel>
+</Window>

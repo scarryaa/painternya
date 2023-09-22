@@ -4,19 +4,19 @@ using Avalonia.Controls;
 
 namespace painternya.Behaviors;
 
-public class ScrolledBehavior
+public class ScrollViewerScrollChangedBehavior
 {
     public static readonly AttachedProperty<ICommand> CommandProperty =
         AvaloniaProperty.RegisterAttached<Control, ICommand>(
             "Command",
-            typeof(ScrolledBehavior),
+            typeof(ScrollViewerScrollChangedBehavior),
             default(ICommand),
             true);
 
     public static ICommand GetCommand(Control control) => control.GetValue(CommandProperty);
     public static void SetCommand(Control control, ICommand value) => control.SetValue(CommandProperty, value);
 
-    static ScrolledBehavior()
+    static ScrollViewerScrollChangedBehavior()
     {
         CommandProperty.Changed.AddClassHandler<ScrollViewer>(HandleCommandChanged);
     }

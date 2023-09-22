@@ -69,9 +69,9 @@
         </StackPanel>
         
         <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Grid.Row="3" Grid.Column="1" Background="Gray"
-                      behaviors:ScrolledBehavior.Command="{Binding ScrolledCommand}">
+                      behaviors:ScrollViewerScrollChangedBehavior.Command="{Binding ScrolledCommand}">
             <Viewbox Stretch="None">
-                <controls:Canvas CanvasWidth="1024" CanvasHeight="1024" DataContext="{Binding CanvasVM}"></controls:Canvas>
+                <controls:Canvas DataContext="{Binding CanvasVM}"></controls:Canvas>
             </Viewbox>
         </ScrollViewer>
         
