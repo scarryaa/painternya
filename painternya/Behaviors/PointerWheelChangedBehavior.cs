@@ -1,3 +1,4 @@
+using System;
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
@@ -27,14 +28,17 @@ public class PointerWheelChangedBehavior
     {
         if (e.NewValue is ICommand newCommand)
         {
-            // If the left mouse button is pressed, execute the command and send the position
-            // of the pointer as a parameter.
             control.PointerWheelChanged += (sender, args) =>
             {
-                // if left ctrl is pressed, zoom
                 if (args.KeyModifiers == KeyModifiers.Control)
                 {
-                    newCommand.Execute(new PointerWheelChangedArgs(args.Delta.Y, args.GetPosition(control as Visual), true, false));
+                    // Calculate the zoom factor based on wheel direction.
+                    double zoomFactor = args.Delta.Y;
+                
+                    // Get the position relative to the content inside the ScrollViewer.
+                    var positionRelativeToContent = args.GetPosition(sender as Visual);
+                
+                    newCommand.Execute(new PointerWheelChangedArgs(zoomFactor, positionRelativeToContent, true, false));
                 }
             };
         }

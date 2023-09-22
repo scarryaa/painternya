@@ -14,6 +14,8 @@ public class MainWindowViewModel : ViewModelBase
     private readonly IDialogService _dialogService;
     private CanvasViewModel? _canvasVm;
     private double _zoom = 1.0;
+    private double _translateX;
+    private double _translateY;
 
     public CanvasViewModel? CanvasVm
     {
@@ -25,6 +27,18 @@ public class MainWindowViewModel : ViewModelBase
     {
         get => _zoom;
         set => this.RaiseAndSetIfChanged(ref _zoom, value);
+    }
+    
+    public double TranslateX
+    {
+        get => _translateX;
+        set => this.RaiseAndSetIfChanged(ref _translateX, value);
+    }
+    
+    public double TranslateY
+    {
+        get => _translateY;
+        set => this.RaiseAndSetIfChanged(ref _translateY, value);
     }
     
     public ICommand SelectToolCommand { get; set; }
@@ -63,25 +77,27 @@ public class MainWindowViewModel : ViewModelBase
         SelectAllCommand = ReactiveCommand.Create(SelectAll);
         
         ScrolledCommand = ReactiveCommand.Create<object>(Scrolled);
-        ZoomCommand = ReactiveCommand.Create<PointerWheelChangedArgs>(HandleZoom);
+        ZoomCommand = ReactiveCommand.Create<PointerWheelChangedArgs>(ZoomAtPoint);
     }
-
-    private void HandleZoom(PointerWheelChangedArgs obj)
+    
+    public void ZoomAtPoint(PointerWheelChangedArgs args)
     {
-        Point preZoomCursorPosRelativeToContent = obj.Position;
-
         double oldZoom = Zoom;
-        Zoom = Math.Clamp(Zoom + obj.Delta / 10, 0.1, 10);
+        
+        double zoomFactor = args.Delta > 0 ? 1.01 : 0.99;
 
-        Console.WriteLine(preZoomCursorPosRelativeToContent);
-        Point postZoomCursorPosRelativeToContent = preZoomCursorPosRelativeToContent * (Zoom / oldZoom);
-        CanvasVm.OffsetX += (postZoomCursorPosRelativeToContent.X - preZoomCursorPosRelativeToContent.X);
-        CanvasVm.OffsetY += (postZoomCursorPosRelativeToContent.Y - preZoomCursorPosRelativeToContent.Y);
+        Zoom *= zoomFactor;
 
+        if (Zoom < 0.1) Zoom = 0.1;
+        if (Zoom > 10) Zoom = 10;
+
+        TranslateX = (args.Position.X + TranslateX) * zoomFactor - args.Position.X;
+        TranslateY = (args.Position.Y + TranslateY) * zoomFactor - args.Position.Y;
+        CanvasVm.Offset = new Vector(TranslateX, TranslateY);
         CanvasVm.DrawingContext.Zoom = Zoom;
     }
 
-
+    
     private async Task ShowNewCanvasDialogAsync()
     {
         var dialogViewModel = new NewCanvasDialogViewModel(_dialogService);

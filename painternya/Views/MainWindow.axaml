@@ -71,7 +71,6 @@
         </StackPanel>
         
         <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Grid.Row="3" Grid.Column="1" Background="Gray"
-                      HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
                       behaviors:ScrollViewerScrollChangedBehavior.Command="{Binding ScrolledCommand}"
                       Offset="{Binding CanvasVm.Offset, Mode=TwoWay}">
             <LayoutTransformControl>

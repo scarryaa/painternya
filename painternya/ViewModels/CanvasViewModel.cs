@@ -25,6 +25,7 @@ namespace painternya.ViewModels
         private readonly DrawingContext _drawingContext;
         private double _offsetX;
         private double _offsetY;
+        private Vector _offset;
         private ITool _currentTool = new PencilTool();
         
         public DrawingContext DrawingContext => _drawingContext;
@@ -64,6 +65,16 @@ namespace painternya.ViewModels
                 this.RaisePropertyChanged();
             }
         }
+
+        public Vector Offset
+        {
+            get => _offset;
+            set
+            {
+                _offset = value;
+                this.RaisePropertyChanged();
+            }
+        }
         
         public double OffsetX
         {
@@ -72,7 +83,6 @@ namespace painternya.ViewModels
             {
                 _offsetX = value;
                 _horizontalOffsetChangedSubject.OnNext(Unit.Default);
-                Offset = new Vector(OffsetX, OffsetY);
             }
         }
 
@@ -83,11 +93,8 @@ namespace painternya.ViewModels
             {
                 _offsetY = value;
                 _verticalOffsetChangedSubject.OnNext(Unit.Default);
-                Offset = new Vector(OffsetX, OffsetY);
             }
         }
-        
-        public Vector Offset { get; set; }
         
         public ICommand? PointerMovedCommand { get; set; }
         public ICommand? PointerPressedCommand { get; set; }
