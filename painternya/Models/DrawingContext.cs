@@ -11,6 +11,7 @@ namespace painternya.Models;
 
 public class DrawingContext
 {    
+    private double _currentZoom = 1.0;
     private readonly Tile?[,]? _tiles;
     private int _totalWidth;
     private int _totalHeight;
@@ -21,6 +22,18 @@ public class DrawingContext
     private double OffsetY { get; set; }
     private const int TileSize = 128;
     
+    public double Zoom
+    {
+        get => _currentZoom;
+        set
+        {
+            if (value < 0.1 || value > 10)
+                return;
+
+            _currentZoom = value;
+            UpdateTileVisibilities();
+        }
+    }
     public IObservable<Unit> DrawingChanged { get; private set; }
 
     public int TilesX => _tiles.GetLength(0);
@@ -99,8 +112,19 @@ public class DrawingContext
         
     private bool IsTileVisible(int x, int y)
     {
-        var tileRect = new Rect(x * TileSize, y * TileSize, TileSize, TileSize);
-        var visibleRect = new Rect(OffsetX, OffsetY, _totalWidth, _totalHeight);
+        var zoomedTileSize = TileSize * _currentZoom;
+        
+        double padding = zoomedTileSize * 4;
+        
+        // Adjusting tile size and position based on zoom
+        var tileRect = new Rect(x * zoomedTileSize, y * zoomedTileSize, zoomedTileSize, zoomedTileSize);
+        
+        // Adjusting visible rect size based on zoom
+        var visibleRect = new Rect((OffsetX / _currentZoom) - padding, 
+            (OffsetY / _currentZoom) - padding, 
+            (_totalWidth / _currentZoom) + 2 * padding, 
+            (_totalHeight / _currentZoom) + 2 * padding);
+
 
         return tileRect.Intersects(visibleRect);
     }

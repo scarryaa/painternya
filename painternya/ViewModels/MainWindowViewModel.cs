@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
+using Avalonia;
 using Avalonia.Controls;
 using painternya.Interfaces;
 using painternya.Models;
@@ -11,11 +13,18 @@ public class MainWindowViewModel : ViewModelBase
 {
     private readonly IDialogService _dialogService;
     private CanvasViewModel? _canvasVm;
+    private double _zoom = 1.0;
 
     public CanvasViewModel? CanvasVm
     {
         get => _canvasVm;
         set => this.RaiseAndSetIfChanged(ref _canvasVm, value);
+    }
+    
+    public double Zoom
+    {
+        get => _zoom;
+        set => this.RaiseAndSetIfChanged(ref _zoom, value);
     }
     
     public ICommand SelectToolCommand { get; set; }
@@ -33,6 +42,7 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand SelectAllCommand { get; set; }
     
     public ICommand ScrolledCommand { get; set; }
+    public ICommand ZoomCommand { get; set; }
 
     public MainWindowViewModel(IDialogService dialogService)
     {   
@@ -53,7 +63,24 @@ public class MainWindowViewModel : ViewModelBase
         SelectAllCommand = ReactiveCommand.Create(SelectAll);
         
         ScrolledCommand = ReactiveCommand.Create<object>(Scrolled);
+        ZoomCommand = ReactiveCommand.Create<PointerWheelChangedArgs>(HandleZoom);
     }
+
+    private void HandleZoom(PointerWheelChangedArgs obj)
+    {
+        Point preZoomCursorPosRelativeToContent = obj.Position;
+
+        double oldZoom = Zoom;
+        Zoom = Math.Clamp(Zoom + obj.Delta / 10, 0.1, 10);
+
+        Console.WriteLine(preZoomCursorPosRelativeToContent);
+        Point postZoomCursorPosRelativeToContent = preZoomCursorPosRelativeToContent * (Zoom / oldZoom);
+        CanvasVm.OffsetX += (postZoomCursorPosRelativeToContent.X - preZoomCursorPosRelativeToContent.X);
+        CanvasVm.OffsetY += (postZoomCursorPosRelativeToContent.Y - preZoomCursorPosRelativeToContent.Y);
+
+        CanvasVm.DrawingContext.Zoom = Zoom;
+    }
+
 
     private async Task ShowNewCanvasDialogAsync()
     {

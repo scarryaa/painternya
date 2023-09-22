@@ -72,6 +72,7 @@ namespace painternya.ViewModels
             {
                 _offsetX = value;
                 _horizontalOffsetChangedSubject.OnNext(Unit.Default);
+                Offset = new Vector(OffsetX, OffsetY);
             }
         }
 
@@ -82,8 +83,11 @@ namespace painternya.ViewModels
             {
                 _offsetY = value;
                 _verticalOffsetChangedSubject.OnNext(Unit.Default);
+                Offset = new Vector(OffsetX, OffsetY);
             }
         }
+        
+        public Vector Offset { get; set; }
         
         public ICommand? PointerMovedCommand { get; set; }
         public ICommand? PointerPressedCommand { get; set; }
@@ -103,6 +107,7 @@ namespace painternya.ViewModels
                 .Subscribe(_ => InvalidateRequested?.Invoke());
             
             _drawingContext = new DrawingContext(this, canvasWidth, canvasHeight);
+            
             PointerMovedCommand = ReactiveCommand.Create<Point>(HandlePointerMoved);
             PointerPressedCommand = ReactiveCommand.Create<Point>(HandlePointerPressed);
             
@@ -124,6 +129,9 @@ namespace painternya.ViewModels
                     break;
                 case "Eraser":
                     CurrentTool = new EraserTool();
+                    break;
+                case "Brush":
+                    CurrentTool = new BrushTool();
                     break;
                 // case "Fill":
                 //     CurrentTool = new FillTool();

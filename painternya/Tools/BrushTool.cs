@@ -1,17 +1,15 @@
 using Avalonia;
 using Avalonia.Media;
-using Avalonia.Media.Imaging;
 using painternya.Interfaces;
 using DrawingContext = painternya.Models.DrawingContext;
 
 namespace painternya.Tools;
 
-public class PencilTool : ITool
+public class BrushTool : ITool
 {
     public Point LastPoint { get; set; }
-    public static string Name { get; } = "Pencil";
-    public static string Icon { get; } = "fa-solid fa-pencil";
-
+    public static string Name { get; } = "Brush";
+    public static string Icon { get; } = "fa-solid fa-paintbrush";
     public void OnPointerPressed(DrawingContext drawingContext, Point point)
     {
         drawingContext.DrawPixel(point, Colors.Black);

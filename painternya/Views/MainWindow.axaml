@@ -9,6 +9,7 @@
         xmlns:controls="clr-namespace:painternya.Controls"
         xmlns:avalonia="https://github.com/projektanker/icons.avalonia"
         xmlns:behaviors="clr-namespace:painternya.Behaviors"
+        xmlns:tools="clr-namespace:painternya.Tools"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Width="800" Height="700"
@@ -62,17 +63,28 @@
         
         <!-- Left bar -->
         <StackPanel Width="35" Orientation="Vertical" Grid.Row="3" Grid.Column="0">
-            <Button Width="35" Height="35" avalonia:Attached.Icon="fa-solid fa-pencil" Command="{Binding SelectToolCommand}" CommandParameter="Pencil"/>
-            <Button Width="35" Height="35" avalonia:Attached.Icon="fa-solid fa-eraser" Command="{Binding SelectToolCommand}" CommandParameter="Eraser"/>
+            <Button Width="35" Height="35" avalonia:Attached.Icon="{x:Static tools:PencilTool.Icon}" Command="{Binding SelectToolCommand}" CommandParameter="{x:Static tools:PencilTool.Name}"/>
+            <Button Width="35" Height="35" avalonia:Attached.Icon="{x:Static tools:BrushTool.Icon}" Command="{Binding SelectToolCommand}" CommandParameter="{x:Static tools:BrushTool.Name}"/>
+            <Button Width="35" Height="35" avalonia:Attached.Icon="{x:Static tools:EraserTool.Icon}" Command="{Binding SelectToolCommand}" CommandParameter="{x:Static tools:EraserTool.Name}"/>
             <Button Width="35" Height="35" avalonia:Attached.Icon="fa-regular fa-square"/>
             <Button Width="35" Height="35" avalonia:Attached.Icon="fa-solid fa-up-down-left-right"/>
         </StackPanel>
         
         <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Grid.Row="3" Grid.Column="1" Background="Gray"
-                      behaviors:ScrollViewerScrollChangedBehavior.Command="{Binding ScrolledCommand}">
-            <Viewbox Stretch="None">
-                <controls:Canvas DataContext="{Binding CanvasVm}"></controls:Canvas>
-            </Viewbox>
+                      HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                      behaviors:ScrollViewerScrollChangedBehavior.Command="{Binding ScrolledCommand}"
+                      Offset="{Binding CanvasVm.Offset, Mode=TwoWay}">
+            <LayoutTransformControl>
+                <LayoutTransformControl.LayoutTransform>
+                    <ScaleTransform ScaleX="{Binding Zoom}" ScaleY="{Binding Zoom}"/>
+                </LayoutTransformControl.LayoutTransform>
+
+                <Border Background="Transparent" behaviors:PointerWheelChangedBehavior.Command="{Binding ZoomCommand}">
+                    <Viewbox Stretch="None">
+                        <controls:Canvas DataContext="{Binding CanvasVm}"></controls:Canvas>
+                    </Viewbox>
+                </Border>
+            </LayoutTransformControl>
         </ScrollViewer>
         
         <!-- Bottom bar -->
