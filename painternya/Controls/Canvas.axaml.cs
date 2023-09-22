@@ -74,7 +74,7 @@ namespace painternya.Controls
             }
         }
         
-        private void InvalidateCanvas()
+        public void InvalidateCanvas()
         {
             InvalidateVisual();
         }

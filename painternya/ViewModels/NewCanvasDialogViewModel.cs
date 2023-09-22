@@ -7,22 +7,30 @@ using ReactiveUI;
 
 namespace painternya.ViewModels
 {
-    public class NewCanvasDialogViewModel : ViewModelBase // assuming you are using ReactiveUI or replace with INotifyPropertyChanged
+    public class NewCanvasDialogViewModel : ViewModelBase
     {
         private IDialogService _dialogService;
-        private int _width;
-        private int _height;
+        private int _width = 500;
+        private int _height = 500;
         public ICommand CreateCanvasCommand { get; }
         public int Width
         {
             get => _width;
-            set => this.RaiseAndSetIfChanged(ref _width, value);
+            set
+            {
+                _width = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public int Height
         {
             get => _height;
-            set => this.RaiseAndSetIfChanged(ref _height, value);
+            set
+            {
+                _height = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public NewCanvasDialogViewModel(IDialogService dialogService)

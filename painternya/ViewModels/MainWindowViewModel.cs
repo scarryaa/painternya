@@ -63,13 +63,13 @@ public class MainWindowViewModel : ViewModelBase
         SelectMoveCommand = ReactiveCommand.Create(SelectMove);
         ScrolledCommand = ReactiveCommand.Create<object>(Scrolled);
     }
-    
-    public async Task ShowNewCanvasDialogAsync()
+
+    private async Task ShowNewCanvasDialogAsync()
     {
         var dialogViewModel = new NewCanvasDialogViewModel(_dialogService);
         var result = await _dialogService.ShowDialog<CanvasCreationResult>(dialogViewModel);
 
-        if (result != null && result.Success)
+        if (result is { Success: true })
         {
             CanvasVM = new CanvasViewModel(result.Width, result.Height);
         }

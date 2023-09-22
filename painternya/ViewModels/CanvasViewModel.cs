@@ -17,10 +17,29 @@ namespace painternya.ViewModels
         private const int TileSize = 128;
         private Tile[,] _tiles;
         private Point lastPoint;
+        private int _canvasHeight;
+        private int _canvasWidth;
         public int TilesX => _tiles.GetLength(0);
         public int TilesY => _tiles.GetLength(1);
-        public int CanvasHeight { get; set; } = 1024;
-        public int CanvasWidth { get; set; } = 1024;
+        public int CanvasWidth
+        {
+            get => _canvasWidth;
+            set
+            {
+                _canvasWidth = value;
+                this.RaisePropertyChanged();
+            }
+        }
+        
+        public int CanvasHeight
+        {
+            get => _canvasHeight;
+            set
+            {
+                _canvasHeight = value;
+                this.RaisePropertyChanged();
+            }
+        }
         public double HorizontalOffset { get; set; }
         public double VerticalOffset { get; set; }
         public ICommand PointerMovedCommand { get; set; }
@@ -39,29 +58,39 @@ namespace painternya.ViewModels
             
             int tilesX = canvasWidth / TileSize;
             int tilesY = canvasHeight / TileSize;
+            
+            int remainderX = canvasWidth % TileSize;
+            int remainderY = canvasHeight % TileSize;
+            
+            if (remainderX > 0) tilesX++;
+            if (remainderY > 0) tilesY++;
+
             _tiles = new Tile[tilesX, tilesY];
 
             for (int x = 0; x < tilesX; x++)
             {
                 for (int y = 0; y < tilesY; y++)
                 {
-                    // Set every odd tile to white and every even tile to black
-                    if ((x + y) % 2 == 0)
-                    {
-                        _tiles[x, y] = new Tile(TileSize, TileSize);
-                        _tiles[x, y].Bitmap.Clear(Colors.White);
-                    }
-                    else
-                    {
-                        _tiles[x, y] = new Tile(TileSize, TileSize);
-                        _tiles[x, y].Bitmap.Clear(Colors.Black);
-                    }
+                    int currentTileWidth = (x == tilesX - 1 && remainderX > 0) ? remainderX : TileSize;
+                    int currentTileHeight = (y == tilesY - 1 && remainderY > 0) ? remainderY : TileSize;
+
+                    _tiles[x, y] = new Tile(currentTileWidth, currentTileHeight);
                     
+                    // Debugging code to see the tiles
+                    // if ((x + y) % 2 == 0)
+                    // {
+                    //     _tiles[x, y].Bitmap.Clear(Colors.White);
+                    // }
+                    // else
+                    // {
+                    //     _tiles[x, y].Bitmap.Clear(Colors.Black);
+                    // }
+
                     _tiles[x, y].Dirty = true;
-                    
-                    // tiles[x, y] = new Tile(TileSize, TileSize);
                 }
             }
+            
+            UpdateTileVisibilities();
         }
         
         public Tile GetTile(int x, int y)
@@ -145,23 +174,31 @@ namespace painternya.ViewModels
 
         private void DrawPixel(Point point, Color color)
         {
+            if (!IsPointInsideCanvas((int)point.X, (int)point.Y))
+                return;
+    
             SetPixel((int)point.X, (int)point.Y, color);
-            
+
             int tileX = (int)point.X / TileSize;
             int tileY = (int)point.Y / TileSize;
-    
+
             MarkTileAsDirty(tileX, tileY);
+
+            // Get the actual width and height of the current tile.
+            int currentTileWidth = (tileX == _tiles.GetLength(0) - 1 && CanvasWidth % TileSize != 0) ? CanvasWidth % TileSize : TileSize;
+            int currentTileHeight = (tileY == _tiles.GetLength(1) - 1 && CanvasHeight % TileSize != 0) ? CanvasHeight % TileSize : TileSize;
+
+            // Calculate pixel offset using the current tile's dimensions
+            int pixelOffsetX = (int)point.X % currentTileWidth;
+            int pixelOffsetY = (int)point.Y % currentTileHeight;
 
             // If the drawing point is close to the tile edge, 
             // we'll mark neighboring tiles as dirty too.
-            int pixelOffsetX = (int)point.X % TileSize;
-            int pixelOffsetY = (int)point.Y % TileSize;
-    
             if (pixelOffsetX < 2)
             {
                 MarkTileAsDirty(tileX - 1, tileY);
             }
-            if (pixelOffsetX > TileSize - 2)
+            if (pixelOffsetX > currentTileWidth - 2)
             {
                 MarkTileAsDirty(tileX + 1, tileY);
             }
@@ -169,11 +206,11 @@ namespace painternya.ViewModels
             {
                 MarkTileAsDirty(tileX, tileY - 1);
             }
-            if (pixelOffsetY > TileSize - 2)
+            if (pixelOffsetY > currentTileHeight - 2)
             {
                 MarkTileAsDirty(tileX, tileY + 1);
             }
-            
+
             InvalidateRequested?.Invoke();
         }
         
@@ -189,18 +226,31 @@ namespace painternya.ViewModels
         {
             int tileX = x / TileSize;
             int tileY = y / TileSize;
+
             int pixelX = x % TileSize;
             int pixelY = y % TileSize;
-    
-            // Check if the tile or pixel is outside the canvas
-            if (tileX < 0 || tileX >= TilesX || tileY < 0 || tileY >= TilesY ||
-                pixelX < 0 || pixelX >= TileSize || pixelY < 0 || pixelY >= TileSize)
-            {
+
+            // Ensure the point is inside the current tile
+            if (pixelX < 0 || pixelX >= TileSize || pixelY < 0 || pixelY >= TileSize)
                 return;
-            }
-    
+
+            // Check if it's a partial tile by seeing if it's the last tile AND 
+            // if the CanvasWidth/Height isn't an exact multiple of TileSize
+            bool isPartialTileX = tileX == _tiles.GetLength(0) - 1 && CanvasWidth % TileSize != 0;
+            bool isPartialTileY = tileY == _tiles.GetLength(1) - 1 && CanvasHeight % TileSize != 0;
+
+            if ((isPartialTileX && pixelX >= CanvasWidth % TileSize) || 
+                (isPartialTileY && pixelY >= CanvasHeight % TileSize))
+                return;
+
             _tiles[tileX, tileY].Bitmap.SetPixel(pixelX, pixelY, color);
             _tiles[tileX, tileY].Dirty = true;
+        }
+
+        
+        private bool IsPointInsideCanvas(int x, int y)
+        {
+            return x >= 0 && x < CanvasWidth && y >= 0 && y < CanvasHeight;
         }
     }
 }
