@@ -24,7 +24,7 @@ public class DialogService : IDialogService
         return result;
     }
     
-    public void SetDialogResult(object viewModel, object result)
+    public void SetDialogResult(object viewModel, object? result)
     {
         if (_openDialogs.TryGetValue(viewModel, out var dialog))
         {

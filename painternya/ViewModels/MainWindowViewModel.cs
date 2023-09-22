@@ -1,11 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Windows.Input;
-using Avalonia;
 using Avalonia.Controls;
 using painternya.Interfaces;
 using painternya.Models;
-using painternya.Views;
 using ReactiveUI;
 
 namespace painternya.ViewModels;
@@ -13,12 +10,12 @@ namespace painternya.ViewModels;
 public class MainWindowViewModel : ViewModelBase
 {
     private readonly IDialogService _dialogService;
-    private CanvasViewModel _canvasVM;
+    private CanvasViewModel? _canvasVm;
 
-    public CanvasViewModel CanvasVM
+    public CanvasViewModel? CanvasVm
     {
-        get => _canvasVM;
-        set => this.RaiseAndSetIfChanged(ref _canvasVM, value);
+        get => _canvasVm;
+        set => this.RaiseAndSetIfChanged(ref _canvasVm, value);
     }
     
     public ICommand NewCommand { get; set; }
@@ -71,7 +68,7 @@ public class MainWindowViewModel : ViewModelBase
 
         if (result is { Success: true })
         {
-            CanvasVM = new CanvasViewModel(result.Width, result.Height);
+            CanvasVm = new CanvasViewModel(result.Width, result.Height);
         }
     }
     
@@ -80,11 +77,11 @@ public class MainWindowViewModel : ViewModelBase
         var scrollViewer = sender as ScrollViewer;
         if (scrollViewer == null) return;
 
-        if (CanvasVM == null) return;
+        if (CanvasVm == null) return;
         
-        CanvasVM.HorizontalOffset = scrollViewer.Offset.X;
-        CanvasVM.VerticalOffset = scrollViewer.Offset.Y;
-        CanvasVM.UpdateTileVisibilities();
+        CanvasVm.OffsetX = scrollViewer.Offset.X;
+        CanvasVm.OffsetY = scrollViewer.Offset.Y;
+        CanvasVm.DrawingContext.UpdateTileVisibilities();
     }
 
     private async Task New()

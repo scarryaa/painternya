@@ -1,6 +1,4 @@
 using System.Windows.Input;
-using Avalonia.Controls;
-using Avalonia.Xaml.Interactions.Custom;
 using painternya.Interfaces;
 using painternya.Models;
 using ReactiveUI;
@@ -9,7 +7,7 @@ namespace painternya.ViewModels
 {
     public class NewCanvasDialogViewModel : ViewModelBase
     {
-        private IDialogService _dialogService;
+        private readonly IDialogService _dialogService;
         private int _width = 500;
         private int _height = 500;
         public ICommand CreateCanvasCommand { get; }

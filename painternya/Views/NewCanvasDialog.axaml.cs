@@ -9,7 +9,7 @@ namespace painternya.Views
 {
     public partial class NewCanvasDialog : Window, IHasDialogResult
     {
-        public object DialogResultValue { get; set; }
+        public object? DialogResultValue { get; set; }
 
         public NewCanvasDialog()
         {

@@ -3,7 +3,9 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
+using painternya.Models;
 using painternya.ViewModels;
+using DrawingContext = Avalonia.Media.DrawingContext;
 
 namespace painternya.Controls
 {
@@ -64,7 +66,7 @@ namespace painternya.Controls
             {
                 for (var y = 0; y < ViewModel.TilesY; y++)
                 {
-                    var tile = ViewModel.GetTile(x, y);
+                    var tile = ViewModel.DrawingContext.GetTile(x, y);
 
                     if (tile is not { Dirty: true, IsVisible: true }) continue;
                     

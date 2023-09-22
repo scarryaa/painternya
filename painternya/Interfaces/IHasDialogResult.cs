@@ -2,5 +2,5 @@ namespace painternya.Interfaces;
 
 public interface IHasDialogResult
 {
-    object DialogResultValue { get; set; }
+    object? DialogResultValue { get; set; }
 }
