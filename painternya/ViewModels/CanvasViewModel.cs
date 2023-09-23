@@ -124,7 +124,9 @@ namespace painternya.ViewModels
             _drawingContext.DrawingChanged
                 .ObserveOn(AvaloniaScheduler.Instance)
                 .Subscribe(_ => InvalidateRequested?.Invoke());
-
+            
+            DrawingContext.UpdateTileVisibilities();
+            InvalidateRequested?.Invoke();
         }
         
         public void SelectTool(string tool)

@@ -17,6 +17,7 @@ public class DrawingContext
     private int _totalHeight;
     private readonly Subject<Unit> drawingChangedSubject;
     private readonly IOffsetObserver _observer;
+    private Vector _viewport;
     
     private double OffsetX { get; set; }
     private double OffsetY { get; set; }
@@ -34,6 +35,17 @@ public class DrawingContext
             UpdateTileVisibilities();
         }
     }
+    
+    public Vector Viewport
+    {
+        get => _viewport;
+        set
+        {
+            _viewport = value;
+            UpdateTileVisibilities();
+        }
+    }
+    
     public IObservable<Unit> DrawingChanged { get; private set; }
 
     public int TilesX => _tiles.GetLength(0);
@@ -51,9 +63,10 @@ public class DrawingContext
         
         drawingChangedSubject = new Subject<Unit>();
         DrawingChanged = drawingChangedSubject.AsObservable();
-        
+
         _totalWidth = totalWidth;
         _totalHeight = totalHeight;
+        _viewport = new Vector(_totalWidth * .8, _totalHeight * .8);
         
         int tilesX = _totalWidth / TileSize;
         int tilesY = _totalHeight / TileSize;
@@ -112,20 +125,17 @@ public class DrawingContext
         
     private bool IsTileVisible(int x, int y)
     {
-        var zoomedTileSize = TileSize * _currentZoom;
+        var tileRect = new Rect(x * TileSize, y * TileSize, TileSize, TileSize);
+        var padding = 10 / _currentZoom;
         
-        double padding = zoomedTileSize * 4;
+        var viewportWidth = _viewport.X / _currentZoom;
+        var viewportHeight = _viewport.Y / _currentZoom;
         
-        // Adjusting tile size and position based on zoom
-        var tileRect = new Rect(x * zoomedTileSize, y * zoomedTileSize, zoomedTileSize, zoomedTileSize);
-        
-        // Adjusting visible rect size based on zoom
         var visibleRect = new Rect((OffsetX / _currentZoom) - padding, 
             (OffsetY / _currentZoom) - padding, 
-            (_totalWidth / _currentZoom) + 2 * padding, 
-            (_totalHeight / _currentZoom) + 2 * padding);
-
-
+            viewportWidth + 2 * padding, 
+            viewportHeight + 2 * padding);
+        
         return tileRect.Intersects(visibleRect);
     }
 

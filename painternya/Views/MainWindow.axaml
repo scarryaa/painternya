@@ -72,7 +72,8 @@
         
         <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Grid.Row="3" Grid.Column="1" Background="Gray"
                       behaviors:ScrollViewerScrollChangedBehavior.Command="{Binding ScrolledCommand}"
-                      Offset="{Binding CanvasVm.Offset, Mode=TwoWay}">
+                      Offset="{Binding CanvasVm.Offset, Mode=TwoWay}"
+                      Viewport="{Binding Viewport, Mode=OneTime}">
             <LayoutTransformControl>
                 <LayoutTransformControl.LayoutTransform>
                     <ScaleTransform ScaleX="{Binding Zoom}" ScaleY="{Binding Zoom}"/>

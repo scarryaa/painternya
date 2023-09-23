@@ -26,7 +26,7 @@ public class Tile
             }
         }
         
-        IsVisible = false;
+        IsVisible = true;
         Dirty = true;
     }
 }

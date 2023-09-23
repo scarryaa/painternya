@@ -16,11 +16,22 @@ public class MainWindowViewModel : ViewModelBase
     private double _zoom = 1.0;
     private double _translateX;
     private double _translateY;
+    private Vector _viewport;
 
     public CanvasViewModel? CanvasVm
     {
         get => _canvasVm;
         set => this.RaiseAndSetIfChanged(ref _canvasVm, value);
+    }
+
+    public Vector Viewport
+    {
+        get
+        {
+            if (CanvasVm == null) return new Vector(0, 0);
+            return new Vector(CanvasVm.CanvasWidth * Zoom, CanvasVm.CanvasHeight * Zoom);
+        }
+        set => this.RaiseAndSetIfChanged(ref _viewport, value);
     }
     
     public double Zoom
@@ -95,6 +106,7 @@ public class MainWindowViewModel : ViewModelBase
         TranslateY = (args.Position.Y + TranslateY) * zoomFactor - args.Position.Y;
         CanvasVm.Offset = new Vector(TranslateX, TranslateY);
         CanvasVm.DrawingContext.Zoom = Zoom;
+        CanvasVm.DrawingContext.Viewport = Viewport;
     }
 
     
