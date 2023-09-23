@@ -139,7 +139,7 @@ public class DrawingContext
         return tileRect.Intersects(visibleRect);
     }
 
-    public void DrawLine(Point startingPoint, Point endingPoint, Color color)
+    public void DrawLine(Point startingPoint, Point endingPoint, Color color, int brushSize)
     {
         int x1 = (int)startingPoint.X;
         int y1 = (int)startingPoint.Y;
@@ -156,7 +156,7 @@ public class DrawingContext
 
         while (true)
         {
-            SetPixel(x1, y1, color);
+            SetPixel(x1, y1, color, brushSize);
 
             if (x1 == x2 && y1 == y2) break;
 
@@ -178,17 +178,16 @@ public class DrawingContext
         drawingChangedSubject.OnNext(Unit.Default);
     }
 
-    public void DrawPixel(Point point, Color color)
+    public void DrawPixel(Point point, Color color, int brushSize = 1)
     {
         if (!IsPointInsideCanvas((int)point.X, (int)point.Y))
             return;
 
-        SetPixel((int)point.X, (int)point.Y, color);
+        SetPixel((int)point.X, (int)point.Y, color, brushSize);
+        MarkTileAsDirty((int)point.X / TileSize, (int)point.Y / TileSize, brushSize);
 
         int tileX = (int)point.X / TileSize;
         int tileY = (int)point.Y / TileSize;
-
-        MarkTileAsDirty(tileX, tileY);
 
         // Get the actual width and height of the current tile.
         int currentTileWidth = _tiles != null && (tileX == _tiles.GetLength(0) - 1 && _totalWidth % TileSize != 0)
@@ -227,37 +226,61 @@ public class DrawingContext
         drawingChangedSubject.OnNext(Unit.Default);
     }
 
-    private void MarkTileAsDirty(int x, int y)
+    private void MarkTileAsDirty(int x, int y, int brushSize = 1)
     {
-        if (x >= 0 && x < TilesX && y >= 0 && y < TilesY)
+        int halfBrush = brushSize / 2;
+
+        for (int offsetX = -halfBrush; offsetX <= halfBrush; offsetX++)
         {
-            GetTile(x, y).Dirty = true;
+            for (int offsetY = -halfBrush; offsetY <= halfBrush; offsetY++)
+            {
+                int tileX = x + offsetX;
+                int tileY = y + offsetY;
+
+                if (tileX >= 0 && tileX < TilesX && tileY >= 0 && tileY < TilesY)
+                {
+                    GetTile(tileX, tileY).Dirty = true;
+                }
+            }
         }
     }
 
-    private void SetPixel(int x, int y, Color color)
+
+    private void SetPixel(int x, int y, Color color, int thickness = 1)
     {
-        int tileX = x / TileSize;
-        int tileY = y / TileSize;
+        int radius = thickness / 2;
+        for (int offsetX = -radius; offsetX <= radius; offsetX++)
+        {
+            for (int offsetY = -radius; offsetY <= radius; offsetY++)
+            {
+                // For a square brush
+                int paintX = x + offsetX;
+                int paintY = y + offsetY;
 
-        int pixelX = x % TileSize;
-        int pixelY = y % TileSize;
+                // Optional: For a circular brush, uncomment the below check
+                if ((offsetX * offsetX) + (offsetY * offsetY) > (radius * radius))
+                    continue;
 
-        // Ensure the point is inside the current tile
-        if (pixelX < 0 || pixelX >= TileSize || pixelY < 0 || pixelY >= TileSize)
-            return;
+                if (!IsPointInsideCanvas(paintX, paintY))
+                    continue;
 
-        // Check if it's a partial tile by seeing if it's the last tile AND 
-        // if the CanvasWidth/Height isn't an exact multiple of TileSize
-        bool isPartialTileX = tileX == _tiles?.GetLength(0) - 1 && _totalWidth % TileSize != 0;
-        bool isPartialTileY = tileY == _tiles?.GetLength(1) - 1 && _totalHeight % TileSize != 0;
+                int tileX = paintX / TileSize;
+                int tileY = paintY / TileSize;
 
-        if ((isPartialTileX && pixelX >= _totalWidth % TileSize) ||
-            (isPartialTileY && pixelY >= _totalHeight % TileSize))
-            return;
+                int pixelX = paintX % TileSize;
+                int pixelY = paintY % TileSize;
 
-        _tiles[tileX, tileY].Bitmap.SetPixel(pixelX, pixelY, color);
-        _tiles[tileX, tileY].Dirty = true;
+                bool isPartialTileX = tileX == _tiles?.GetLength(0) - 1 && _totalWidth % TileSize != 0;
+                bool isPartialTileY = tileY == _tiles?.GetLength(1) - 1 && _totalHeight % TileSize != 0;
+
+                if ((isPartialTileX && pixelX >= _totalWidth % TileSize) ||
+                    (isPartialTileY && pixelY >= _totalHeight % TileSize))
+                    continue;
+
+                _tiles[tileX, tileY].Bitmap.SetPixel(pixelX, pixelY, color);
+                _tiles[tileX, tileY].Dirty = true;
+            }
+        }
     }
 
     private bool IsPointInsideCanvas(int x, int y)

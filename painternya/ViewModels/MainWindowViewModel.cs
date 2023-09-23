@@ -12,7 +12,7 @@ namespace painternya.ViewModels;
 public class MainWindowViewModel : ViewModelBase
 {
     private readonly IDialogService _dialogService;
-    private CanvasViewModel? _canvasVm;
+    private CanvasViewModel? _canvasVm = new CanvasViewModel(0, 0);
     private double _zoom = 1.0;
     private double _translateX;
     private double _translateY;
@@ -23,7 +23,7 @@ public class MainWindowViewModel : ViewModelBase
         get => _canvasVm;
         set => this.RaiseAndSetIfChanged(ref _canvasVm, value);
     }
-
+    
     public Vector Viewport
     {
         get

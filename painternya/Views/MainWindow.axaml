@@ -58,7 +58,10 @@
         
         <!-- Top sub bar -->
         <StackPanel Height="35" Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
-            
+            <TextBlock Text="Current Tool:"></TextBlock>
+            <ComboBox Margin="5 0 0 5" Width="100" ItemsSource="{Binding CanvasVm.Tools}" SelectedItem="{Binding CanvasVm.CurrentTool}" DisplayMemberBinding="{Binding CurrentToolName}"></ComboBox>
+            <TextBlock Text="Size:"></TextBlock>
+            <TextBox Margin="5 0 0 5" Width="50" Text="{Binding CanvasVm.CurrentTool.Size, Mode=TwoWay}"></TextBox>
         </StackPanel>
         
         <!-- Left bar -->
@@ -76,13 +79,13 @@
                       Viewport="{Binding Viewport, Mode=OneTime}">
             <LayoutTransformControl>
                 <LayoutTransformControl.LayoutTransform>
-                    <ScaleTransform ScaleX="{Binding Zoom}" ScaleY="{Binding Zoom}"/>
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="{Binding Zoom}" ScaleY="{Binding Zoom}"/>
+                    </TransformGroup>
                 </LayoutTransformControl.LayoutTransform>
 
                 <Border Background="Transparent" behaviors:PointerWheelChangedBehavior.Command="{Binding ZoomCommand}">
-                    <Viewbox Stretch="None">
-                        <controls:Canvas DataContext="{Binding CanvasVm}"></controls:Canvas>
-                    </Viewbox>
+                    <controls:Canvas DataContext="{Binding CanvasVm}"></controls:Canvas>
                 </Border>
             </LayoutTransformControl>
         </ScrollViewer>

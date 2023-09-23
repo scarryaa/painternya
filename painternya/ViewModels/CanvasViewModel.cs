@@ -1,12 +1,15 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Windows.Input;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.ReactiveUI;
+using Microsoft.VisualBasic;
 using painternya.Interfaces;
 using painternya.Models;
 using painternya.Tools;
@@ -27,11 +30,30 @@ namespace painternya.ViewModels
         private double _offsetY;
         private Vector _offset;
         private ITool _currentTool = new PencilTool();
+        private ObservableCollection<ITool> _tools = new ObservableCollection<ITool>
+        {
+            new PencilTool(),
+            new EraserTool(),
+            new BrushTool()
+        };
         
         public DrawingContext DrawingContext => _drawingContext;
         
         public int TilesX => _drawingContext.TilesX;
         public int TilesY => _drawingContext.TilesY;
+        
+        public ObservableCollection<ITool> Tools
+        {
+            get => _tools;
+            set
+            {
+                if (_tools != value)
+                {
+                    _tools = value;
+                    this.RaisePropertyChanged();
+                }
+            }
+        }
         
         public ITool CurrentTool
         {
@@ -176,13 +198,13 @@ namespace painternya.ViewModels
 
         private void HandlePointerPressed(Point point)
         {
-            _currentTool.OnPointerPressed(_drawingContext, point);
+            _currentTool.OnPointerPressed(_drawingContext, point, CurrentTool.Size);
             _lastPoint = point;
         }
         
         private void HandlePointerMoved(Point point)
         {
-            _currentTool.OnPointerMoved(_drawingContext, point);
+            _currentTool.OnPointerMoved(_drawingContext, point, CurrentTool.Size);
             _lastPoint = point;
         }
     }
