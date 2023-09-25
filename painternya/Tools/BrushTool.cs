@@ -13,6 +13,11 @@ public class BrushTool : ITool
     public string CurrentToolName { get; } = Name;
     public int Size { get; set; } = 4;
 
+    public BrushTool(int size)
+    {
+        Size = size;
+    }
+
     public void OnPointerPressed(DrawingContext drawingContext, Point point, int brushSize)
     {
         drawingContext.DrawPixel(point, Colors.Black, brushSize);

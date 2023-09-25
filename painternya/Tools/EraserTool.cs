@@ -12,6 +12,11 @@ public class EraserTool : ITool
     public static string Icon { get; } = "fa-solid fa-eraser";
     public string CurrentToolName { get; } = Name;
     public int Size { get; set; } = 4;
+
+    public EraserTool(int size)
+    {
+        Size = size;
+    }
     
     public void OnPointerPressed(DrawingContext drawingContext, Point point, int brushSize)
     {

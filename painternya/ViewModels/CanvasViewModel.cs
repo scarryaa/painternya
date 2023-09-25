@@ -29,18 +29,31 @@ namespace painternya.ViewModels
         private double _offsetX;
         private double _offsetY;
         private Vector _offset;
-        private ITool _currentTool = new PencilTool();
-        private ObservableCollection<ITool> _tools = new ObservableCollection<ITool>
+        private static ITool _globalCurrentTool;
+        private static int _globalCurrentToolSize = 4;
+        private ITool _currentTool = new PencilTool(_globalCurrentToolSize);
+        private ObservableCollection<ITool> _tools = new()
         {
-            new PencilTool(),
-            new EraserTool(),
-            new BrushTool()
+            new PencilTool(_globalCurrentToolSize),
+            new EraserTool(_globalCurrentToolSize),
+            new BrushTool(_globalCurrentToolSize)
         };
         
         public DrawingContext DrawingContext => _drawingContext;
         
         public int TilesX => _drawingContext.TilesX;
         public int TilesY => _drawingContext.TilesY;
+        
+        public int GlobalCurrentToolSize
+        {
+            get => _globalCurrentToolSize;
+            set
+            {
+                _globalCurrentToolSize = value;
+                _currentTool.Size = value;
+                this.RaisePropertyChanged();
+            }
+        }
         
         public ObservableCollection<ITool> Tools
         {
@@ -63,6 +76,7 @@ namespace painternya.ViewModels
                 if (_currentTool != value)
                 {
                     _currentTool = value;
+                    _globalCurrentTool = value;
                     this.RaisePropertyChanged();
                 }
             }
@@ -147,6 +161,15 @@ namespace painternya.ViewModels
                 .ObserveOn(AvaloniaScheduler.Instance)
                 .Subscribe(_ => InvalidateRequested?.Invoke());
             
+            if (_globalCurrentTool != null)
+            {
+                CurrentTool = _globalCurrentTool;
+            }
+            else
+            {
+                CurrentTool = new PencilTool(_globalCurrentToolSize);
+            }
+            
             DrawingContext.UpdateTileVisibilities();
             InvalidateRequested?.Invoke();
         }
@@ -156,13 +179,13 @@ namespace painternya.ViewModels
             switch (tool)
             {
                 case "Pencil":
-                    CurrentTool = new PencilTool();
+                    CurrentTool = new PencilTool(_globalCurrentToolSize);
                     break;
                 case "Eraser":
-                    CurrentTool = new EraserTool();
+                    CurrentTool = new EraserTool(_globalCurrentToolSize);
                     break;
                 case "Brush":
-                    CurrentTool = new BrushTool();
+                    CurrentTool = new BrushTool(_globalCurrentToolSize);
                     break;
                 // case "Fill":
                 //     CurrentTool = new FillTool();

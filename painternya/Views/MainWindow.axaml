@@ -14,7 +14,8 @@
         Icon="/Assets/avalonia-logo.ico"
         Width="800" Height="700"
         Title="painternya"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        TransparencyLevelHint="AcrylicBlur">
 
     <Design.DataContext>
         <viewModels:MainWindowViewModel/>
@@ -61,7 +62,7 @@
             <TextBlock Text="Current Tool:"></TextBlock>
             <ComboBox Margin="5 0 0 5" Width="100" ItemsSource="{Binding CanvasVm.Tools}" SelectedItem="{Binding CanvasVm.CurrentTool}" DisplayMemberBinding="{Binding CurrentToolName}"></ComboBox>
             <TextBlock Text="Size:"></TextBlock>
-            <TextBox Margin="5 0 0 5" Width="50" Text="{Binding CanvasVm.CurrentTool.Size, Mode=TwoWay}"></TextBox>
+            <TextBox Margin="5 0 0 5" Width="50" Text="{Binding CanvasVm.GlobalCurrentToolSize, Mode=TwoWay}"></TextBox>
         </StackPanel>
         
         <!-- Left bar -->

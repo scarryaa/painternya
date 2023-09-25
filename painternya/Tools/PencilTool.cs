@@ -12,7 +12,12 @@ public class PencilTool : ITool
     public static string Name { get; } = "Pencil";
     public static string Icon { get; } = "fa-solid fa-pencil";
     public string CurrentToolName { get; } = Name;
-    public int Size { get; set; } = 4;
+    public int Size { get; set; }
+
+    public PencilTool(int size)
+    {
+        Size = size;
+    }
     
     public void OnPointerPressed(DrawingContext drawingContext, Point point, int brushSize)
     {

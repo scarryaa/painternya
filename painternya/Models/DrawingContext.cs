@@ -120,7 +120,6 @@ public class DrawingContext
                 if (tile != null) tile.IsVisible = IsTileVisible(x, y);
             }
         }
-        drawingChangedSubject.OnNext(Unit.Default);
     }
         
     private bool IsTileVisible(int x, int y)
@@ -245,21 +244,26 @@ public class DrawingContext
         }
     }
 
-
     private void SetPixel(int x, int y, Color color, int thickness = 1)
     {
         int radius = thickness / 2;
+        int squaredRadius = radius * radius;
+
+        int maxX = _tiles?.GetLength(0) - 1 ?? -1;
+        int maxY = _tiles?.GetLength(1) - 1 ?? -1;
+
+        int modWidth = _totalWidth % TileSize;
+        int modHeight = _totalHeight % TileSize;
+
         for (int offsetX = -radius; offsetX <= radius; offsetX++)
         {
             for (int offsetY = -radius; offsetY <= radius; offsetY++)
             {
-                // For a square brush
+                if (offsetX * offsetX + offsetY * offsetY > squaredRadius)
+                    continue;
+
                 int paintX = x + offsetX;
                 int paintY = y + offsetY;
-
-                // Optional: For a circular brush, uncomment the below check
-                if ((offsetX * offsetX) + (offsetY * offsetY) > (radius * radius))
-                    continue;
 
                 if (!IsPointInsideCanvas(paintX, paintY))
                     continue;
@@ -270,11 +274,11 @@ public class DrawingContext
                 int pixelX = paintX % TileSize;
                 int pixelY = paintY % TileSize;
 
-                bool isPartialTileX = tileX == _tiles?.GetLength(0) - 1 && _totalWidth % TileSize != 0;
-                bool isPartialTileY = tileY == _tiles?.GetLength(1) - 1 && _totalHeight % TileSize != 0;
+                bool isPartialTileX = tileX == maxX && modWidth != 0;
+                bool isPartialTileY = tileY == maxY && modHeight != 0;
 
-                if ((isPartialTileX && pixelX >= _totalWidth % TileSize) ||
-                    (isPartialTileY && pixelY >= _totalHeight % TileSize))
+                if ((isPartialTileX && pixelX >= modWidth) || 
+                    (isPartialTileY && pixelY >= modHeight))
                     continue;
 
                 _tiles[tileX, tileY].Bitmap.SetPixel(pixelX, pixelY, color);
