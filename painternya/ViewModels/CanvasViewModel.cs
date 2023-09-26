@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Reactive.Disposables;
@@ -29,15 +30,15 @@ namespace painternya.ViewModels
         private double _offsetX;
         private double _offsetY;
         private Vector _offset;
-        private static ITool _globalCurrentTool;
         private static int _globalCurrentToolSize = 4;
-        private ITool _currentTool = new PencilTool(_globalCurrentToolSize);
-        private ObservableCollection<ITool> _tools = new()
-        {
-            new PencilTool(_globalCurrentToolSize),
-            new EraserTool(_globalCurrentToolSize),
-            new BrushTool(_globalCurrentToolSize)
-        };
+        private ITool _currentTool;
+        
+        private ITool _pencil = new PencilTool(_globalCurrentToolSize);
+        private ITool _eraser = new EraserTool(_globalCurrentToolSize);
+        private ITool _brush = new BrushTool(_globalCurrentToolSize);
+        public ITool Pencil => _pencil;
+        public ITool Eraser => _eraser;
+        public ITool Brush => _brush;
         
         public DrawingContext DrawingContext => _drawingContext;
         
@@ -54,31 +55,17 @@ namespace painternya.ViewModels
                 this.RaisePropertyChanged();
             }
         }
+
+        public List<ITool> Tools => new() { Pencil, Eraser, Brush };
         
-        public ObservableCollection<ITool> Tools
-        {
-            get => _tools;
-            set
-            {
-                if (_tools != value)
-                {
-                    _tools = value;
-                    this.RaisePropertyChanged();
-                }
-            }
-        }
-        
-        public ITool CurrentTool
+        public ITool? CurrentTool
         {
             get => _currentTool;
             set
             {
-                if (_currentTool != value)
-                {
-                    _currentTool = value;
-                    _globalCurrentTool = value;
-                    this.RaisePropertyChanged();
-                }
+                _currentTool = value;
+                if (_currentTool != null) _currentTool.Size = _globalCurrentToolSize;
+                this.RaisePropertyChanged();
             }
         }
         
@@ -143,6 +130,7 @@ namespace painternya.ViewModels
         
         public CanvasViewModel(int canvasWidth, int canvasHeight)
         {
+            CurrentTool = Pencil;
             _horizontalOffsetChangedSubject
                 .Merge(_verticalOffsetChangedSubject)
                 .Throttle(TimeSpan.FromMilliseconds(100))
@@ -160,18 +148,6 @@ namespace painternya.ViewModels
             _drawingContext.DrawingChanged
                 .ObserveOn(AvaloniaScheduler.Instance)
                 .Subscribe(_ => InvalidateRequested?.Invoke());
-            
-            if (_globalCurrentTool != null)
-            {
-                CurrentTool = _globalCurrentTool;
-            }
-            else
-            {
-                CurrentTool = new PencilTool(_globalCurrentToolSize);
-            }
-            
-            DrawingContext.UpdateTileVisibilities();
-            InvalidateRequested?.Invoke();
         }
         
         public void SelectTool(string tool)
@@ -179,41 +155,14 @@ namespace painternya.ViewModels
             switch (tool)
             {
                 case "Pencil":
-                    CurrentTool = new PencilTool(_globalCurrentToolSize);
+                    CurrentTool = Pencil;
                     break;
                 case "Eraser":
-                    CurrentTool = new EraserTool(_globalCurrentToolSize);
+                    CurrentTool = Eraser;
                     break;
                 case "Brush":
-                    CurrentTool = new BrushTool(_globalCurrentToolSize);
+                    CurrentTool = Brush;
                     break;
-                // case "Fill":
-                //     CurrentTool = new FillTool();
-                //     break;
-                // case "Rectangle":
-                //     CurrentTool = new RectangleTool();
-                //     break;
-                // case "Ellipse":
-                //     CurrentTool = new EllipseTool();
-                //     break;
-                // case "Line":
-                //     CurrentTool = new LineTool();
-                //     break;
-                // case "Select":
-                //     CurrentTool = new SelectTool();
-                //     break;
-                // case "Move":
-                //     CurrentTool = new MoveTool();
-                //     break;
-                // case "Rotate":
-                //     CurrentTool = new RotateTool();
-                //     break;
-                // case "Scale":
-                //     CurrentTool = new ScaleTool();
-                //     break;
-                // case "Text":
-                //     CurrentTool = new TextTool();
-                //     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(tool), tool, null);
             }

@@ -60,7 +60,7 @@
         <!-- Top sub bar -->
         <StackPanel Height="35" Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
             <TextBlock Text="Current Tool:"></TextBlock>
-            <ComboBox Margin="5 0 0 5" Width="100" ItemsSource="{Binding CanvasVm.Tools}" SelectedItem="{Binding CanvasVm.CurrentTool}" DisplayMemberBinding="{Binding CurrentToolName}"></ComboBox>
+            <ComboBox Margin="5 0 0 5" Width="100" ItemsSource="{Binding CanvasVm.Tools}" SelectedItem="{Binding CanvasVm.CurrentTool, Mode=TwoWay, FallbackValue={x:Static tools:PencilTool.Name}}" DisplayMemberBinding="{Binding CurrentToolName}"></ComboBox>
             <TextBlock Text="Size:"></TextBlock>
             <TextBox Margin="5 0 0 5" Width="50" Text="{Binding CanvasVm.GlobalCurrentToolSize, Mode=TwoWay}"></TextBox>
         </StackPanel>
