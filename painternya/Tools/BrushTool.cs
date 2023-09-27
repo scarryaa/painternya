@@ -20,19 +20,19 @@ public class BrushTool : ITool
 
     public void OnPointerPressed(DrawingContext drawingContext, Point point, int brushSize)
     {
-        drawingContext.DrawPixel(point, Colors.Black, brushSize);
+        drawingContext.SetPixel(point, Colors.Black, brushSize);
         
         LastPoint = point;
     }
 
-    public void OnPointerMoved(DrawingContext drawingContext, Point point, int brushSize)
+    public void OnPointerMoved(DrawingContext overlayContext, DrawingContext drawingContext, Point point, int brushSize)
     {
-        drawingContext.DrawLine(LastPoint, point, Colors.Black, brushSize);
         
         LastPoint = point;
     }
 
-    public void OnPointerReleased(DrawingContext drawingContext, Point point)
+    public void OnPointerReleased(DrawingContext overlayContext, DrawingContext drawingContext, Point point)
     {
+        
     }
 }

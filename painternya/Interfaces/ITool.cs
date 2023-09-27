@@ -12,6 +12,6 @@ public interface ITool
     public string CurrentToolName { get; }
     public int Size { get; set; }
     public void OnPointerPressed(DrawingContext drawingContext, Point point, int brushSize);
-    public void OnPointerMoved(DrawingContext drawingContext, Point point, int brushSize);
-    public void OnPointerReleased(DrawingContext drawingContext, Point point);
+    public void OnPointerMoved(DrawingContext overlayContext, DrawingContext drawingContext, Point point, int brushSize);
+    public void OnPointerReleased(DrawingContext overlayContext, DrawingContext drawingContext, Point point);
 }

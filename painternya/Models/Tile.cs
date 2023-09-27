@@ -8,9 +8,13 @@ namespace painternya.Models;
 
 public class Tile
 {
+    public int X { get; set; }
+    public int Y { get; set; }
     public WriteableBitmap Bitmap { get; }
     public bool Dirty { get; set; }
     public bool IsVisible { get; set; }
+    public int Width => Bitmap.PixelSize.Width;
+    public int Height => Bitmap.PixelSize.Height;
     
     public Tile(int width, int height)
     {
@@ -21,12 +25,12 @@ public class Tile
             {
                 for (int y = 0; y < height; y++)
                 {
-                    context.SetPixel(x, y, Colors.White);
+                    context.SetPixel(x, y, Colors.Transparent);
                 }
             }
         }
         
         IsVisible = true;
-        Dirty = true;
+        Dirty = false;
     }
 }

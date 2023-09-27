@@ -130,7 +130,7 @@ public class MainWindowViewModel : ViewModelBase
         
         CanvasVm.OffsetX = scrollViewer.Offset.X;
         CanvasVm.OffsetY = scrollViewer.Offset.Y;
-        CanvasVm.DrawingContext.UpdateTileVisibilities();
+        // CanvasVm.TileManager.UpdateTileVisibilities();
     }
 
     private async Task New()

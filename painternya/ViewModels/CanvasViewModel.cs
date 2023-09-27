@@ -13,6 +13,7 @@ using Avalonia.ReactiveUI;
 using Microsoft.VisualBasic;
 using painternya.Interfaces;
 using painternya.Models;
+using painternya.Services;
 using painternya.Tools;
 using ReactiveUI;
 using DrawingContext = painternya.Models.DrawingContext;
@@ -24,8 +25,8 @@ namespace painternya.ViewModels
         private Point _lastPoint;
         private int _canvasHeight;
         private int _canvasWidth;
-        private readonly Subject<Unit> _horizontalOffsetChangedSubject = new Subject<Unit>();
-        private readonly Subject<Unit> _verticalOffsetChangedSubject = new Subject<Unit>();
+        private readonly Subject<Unit> _horizontalOffsetChangedSubject = new();
+        private readonly Subject<Unit> _verticalOffsetChangedSubject = new();
         private readonly DrawingContext _drawingContext;
         private double _offsetX;
         private double _offsetY;
@@ -40,10 +41,8 @@ namespace painternya.ViewModels
         public ITool Eraser => _eraser;
         public ITool Brush => _brush;
         
+        public Layer ActiveLayer => _drawingContext.LayerManager.ActiveLayer;
         public DrawingContext DrawingContext => _drawingContext;
-        
-        public int TilesX => _drawingContext.TilesX;
-        public int TilesY => _drawingContext.TilesY;
         
         public int GlobalCurrentToolSize
         {
@@ -55,9 +54,8 @@ namespace painternya.ViewModels
                 this.RaisePropertyChanged();
             }
         }
-
-        public List<ITool> Tools => new() { Pencil, Eraser, Brush };
         
+        public List<ITool> Tools => new() { Pencil, Eraser, Brush };
         public ITool? CurrentTool
         {
             get => _currentTool;
@@ -121,6 +119,7 @@ namespace painternya.ViewModels
         
         public ICommand? PointerMovedCommand { get; set; }
         public ICommand? PointerPressedCommand { get; set; }
+        public ICommand? PointerReleasedCommand { get; set; }
         public event Action? InvalidateRequested;
         
         public IObservable<Unit> OffsetChanged => 
@@ -130,6 +129,7 @@ namespace painternya.ViewModels
         
         public CanvasViewModel(int canvasWidth, int canvasHeight)
         {
+            _drawingContext = new DrawingContext(new LayerManager(canvasWidth, canvasHeight), this, canvasWidth, canvasHeight);
             CurrentTool = Pencil;
             _horizontalOffsetChangedSubject
                 .Merge(_verticalOffsetChangedSubject)
@@ -137,10 +137,9 @@ namespace painternya.ViewModels
                 .ObserveOn(AvaloniaScheduler.Instance)
                 .Subscribe(_ => InvalidateRequested?.Invoke());
             
-            _drawingContext = new DrawingContext(this, canvasWidth, canvasHeight);
-            
             PointerMovedCommand = ReactiveCommand.Create<Point>(HandlePointerMoved);
             PointerPressedCommand = ReactiveCommand.Create<Point>(HandlePointerPressed);
+            PointerReleasedCommand = ReactiveCommand.Create<Point>(HandlePointerReleased);
             
             CanvasWidth = canvasWidth;
             CanvasHeight = canvasHeight;
@@ -176,7 +175,13 @@ namespace painternya.ViewModels
         
         private void HandlePointerMoved(Point point)
         {
-            _currentTool.OnPointerMoved(_drawingContext, point, CurrentTool.Size);
+            _currentTool.OnPointerMoved(_drawingContext, _drawingContext, point, CurrentTool.Size);
+            _lastPoint = point;
+        }
+        
+        private void HandlePointerReleased(Point point)
+        {
+            _currentTool.OnPointerReleased(_drawingContext, _drawingContext, point);
             _lastPoint = point;
         }
     }

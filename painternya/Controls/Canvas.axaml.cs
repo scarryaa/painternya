@@ -1,9 +1,8 @@
 using System;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
-using Avalonia.Media;
 using painternya.Models;
+using painternya.Services;
 using painternya.ViewModels;
 using DrawingContext = Avalonia.Media.DrawingContext;
 
@@ -11,7 +10,6 @@ namespace painternya.Controls
 {
     public partial class Canvas : UserControl
     {
-        private const int TileSize = 128;
         private int _canvasWidth;
         private int _canvasHeight;
         
@@ -62,23 +60,32 @@ namespace painternya.Controls
             
             if (ViewModel == null) return;
             
-            for (var x = 0; x < ViewModel.TilesX; x++)
+            // Render all layers
+            foreach (var layer in ViewModel.DrawingContext.LayerManager.GetAllLayers())
             {
-                for (var y = 0; y < ViewModel.TilesY; y++)
-                {
-                    var tile = ViewModel.DrawingContext.GetTile(x, y);
-
-                    if (tile is not { Dirty: true, IsVisible: true }) continue;
-                    
-                    var destRect = new Rect(x * TileSize, y * TileSize, TileSize, TileSize);
-                    context.DrawImage(tile.Bitmap, sourceRect: new Rect(0, 0, TileSize, TileSize), destRect: destRect);
-                }
+                RenderLayer(layer, context);
             }
         }
         
         public void InvalidateCanvas()
         {
             InvalidateVisual();
+        }
+
+        private void RenderLayer(Layer layer, DrawingContext context)
+        {
+            foreach (var tile in layer.TileManager.GetAllTiles())
+            {
+                Console.WriteLine(tile);
+        
+                var sourceWidth = tile.Width;
+                var sourceHeight = tile.Height;
+
+                var destRect = new Rect(tile.X * TileManager.TileSize, tile.Y * TileManager.TileSize, sourceWidth, sourceHeight);
+                var sourceRect = new Rect(0, 0, sourceWidth, sourceHeight);
+
+                context.DrawImage(tile.Bitmap, sourceRect, destRect);
+            }
         }
     }
 }
