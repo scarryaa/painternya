@@ -10,9 +10,9 @@ public class Layer
     public string Name { get; set; }
     public bool IsVisible { get; set; }
 
-    public Layer(int width, int height)
+    public Layer(string name, int width, int height)
     {
         TileManager = new TileManager(width, height);
-        Name = $"Layer {Guid.NewGuid()}";
+        Name = name;
     }
 }

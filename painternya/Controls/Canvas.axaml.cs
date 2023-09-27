@@ -1,6 +1,7 @@
 using System;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Media;
 using painternya.Models;
 using painternya.Services;
 using painternya.ViewModels;
@@ -57,15 +58,41 @@ namespace painternya.Controls
         public override void Render(DrawingContext context)
         {
             base.Render(context);
-            
+
             if (ViewModel == null) return;
-            
+
+            // Draw checkerboard background
+            DrawCheckerboardBackground(context);
+
             // Render all layers
             foreach (var layer in ViewModel.DrawingContext.LayerManager.GetAllLayers())
             {
                 RenderLayer(layer, context);
             }
+
+            RenderLayer(ViewModel.DrawingContext.LayerManager.PreviewLayer, context);
         }
+
+        private void DrawCheckerboardBackground(DrawingContext context)
+        {
+            int squareSize = 16;
+            Color darkSquareColor = Color.FromRgb(204, 204, 204);
+            Color lightSquareColor = Color.FromRgb(255, 255, 255);
+
+            int horizontalSquares = (int)Math.Ceiling(Width / (double)squareSize);
+            int verticalSquares = (int)Math.Ceiling(Height / (double)squareSize);
+
+            for (int i = 0; i < horizontalSquares; i++)
+            {
+                for (int j = 0; j < verticalSquares; j++)
+                {
+                    var currentColor = ((i + j) % 2 == 0) ? lightSquareColor : darkSquareColor;
+                    var rect = new Rect(i * squareSize, j * squareSize, squareSize, squareSize);
+                    context.FillRectangle(new SolidColorBrush(currentColor), rect);
+                }
+            }
+        }
+
         
         public void InvalidateCanvas()
         {
@@ -76,8 +103,6 @@ namespace painternya.Controls
         {
             foreach (var tile in layer.TileManager.GetAllTiles())
             {
-                Console.WriteLine(tile);
-        
                 var sourceWidth = tile.Width;
                 var sourceHeight = tile.Height;
 

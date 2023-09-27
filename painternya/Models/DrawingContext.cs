@@ -73,17 +73,10 @@ public class DrawingContext
         _viewport = new Vector(_totalWidth * .8, _totalHeight * .8);
     }
     
-    // public void DrawOnActiveLayer(Drawable drawable)
-    // {
-    //     var activeLayer = _layerManager.GetActiveLayer();
-    //     drawable.Draw(activeLayer);
-    //     _drawingChangedSubject.OnNext(Unit.Default);
-    // }
-    
     public void DrawLine(Point startingPoint, Point endingPoint, Color color, int brushSize)
     {
         DrawSegment(startingPoint, endingPoint, color, brushSize);
-        // _drawingChangedSubject.OnNext(Unit.Default);
+        _drawingChangedSubject.OnNext(Unit.Default);
     }
 
     public void DrawLine(Point startingPoint, List<Point> points, Color color, int brushSize)
@@ -91,17 +84,15 @@ public class DrawingContext
         if (points.Count == 0) return;
 
         Point currentPoint = startingPoint;
-        Console.WriteLine($"Drawing {points.Count} points");
         foreach (Point endingPoint in points)
         {
             DrawSegment(currentPoint, endingPoint, color, brushSize);
             currentPoint = endingPoint;
         }
-        //
-        // _drawingChangedSubject.OnNext(Unit.Default);
+        _drawingChangedSubject.OnNext(Unit.Default);
     }
     
-    private bool IsPointInsideCanvas(int x, int y)
+    private bool IsPointInsideCanvas(double x, double y)
     {
         return x >= 0 && x < _totalWidth && y >= 0 && y < _totalHeight;
     }
@@ -147,20 +138,37 @@ public class DrawingContext
     {
         int radius = thickness / 2;
         int squaredRadius = radius * radius;
-        
+
         int x = (int)point.X;
         int y = (int)point.Y;
     
-        int tileX = x / TileManager.TileSize;
-        int tileY = y / TileManager.TileSize;
-    
-        var tile = CurrentTileManager.GetTile(tileX, tileY);
-    
-        int pixelX = x % TileManager.TileSize;
-        int pixelY = y % TileManager.TileSize;
-    
-        tile.Bitmap.SetPixel(pixelX, pixelY, color);
-        tile.Dirty = true;
+        for (int offsetX = -radius; offsetX <= radius; offsetX++)
+        {
+            for (int offsetY = -radius; offsetY <= radius; offsetY++)
+            {
+                if (offsetX * offsetX + offsetY * offsetY <= squaredRadius) 
+                {
+                    int absoluteX = x + offsetX;
+                    int absoluteY = y + offsetY;
+                    
+                    if (!IsPointInsideCanvas(absoluteX, absoluteY))
+                    {
+                        continue;
+                    }
+
+                    int tileX = absoluteX / TileManager.TileSize;
+                    int tileY = absoluteY / TileManager.TileSize;
+                
+                    var tile = CurrentTileManager.GetTile(tileX, tileY);
+                
+                    int pixelX = absoluteX % TileManager.TileSize;
+                    int pixelY = absoluteY % TileManager.TileSize;
+
+                    tile.Bitmap.SetPixel(pixelX, pixelY, color);
+                    tile.Dirty = true;
+                }
+            }
+        }
     }
 
     public void Execute(DrawLineAction lineAction)

@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Media;
 using painternya.Actions;
 using painternya.Interfaces;
+using painternya.Services;
 using DrawingContext = painternya.Models.DrawingContext;
 
 namespace painternya.Tools;
@@ -22,7 +23,7 @@ public class EraserTool : ITool
         Size = size;
     }
     
-    public void OnPointerPressed(DrawingContext drawingContext, Point point, int brushSize)
+    public void OnPointerPressed(LayerManager layerManager, DrawingContext drawingContext, Point point, int brushSize)
     {
         StartPoint = point;
         AccumulatedPoints.Clear();
@@ -31,24 +32,26 @@ public class EraserTool : ITool
         LastPoint = point;
     }
 
-    public void OnPointerMoved(DrawingContext overlayContext, DrawingContext drawingContext, Point point, int brushSize)
+    public void OnPointerMoved(DrawingContext drawingContext, Point point, int brushSize)
     {
-        
         AccumulatedPoints.Add(point);
             
-        overlayContext.DrawLine(LastPoint, point, Colors.Transparent, Size);
+        drawingContext.DrawLine(LastPoint, point, Colors.Transparent, Size);
             
         LastPoint = point;
     }
 
-    public void OnPointerReleased(DrawingContext overlayContext, DrawingContext drawingContext, Point point)
+    public void OnPointerReleased(LayerManager layerManager, DrawingContext drawingContext, Point point)
     {
-        if (AccumulatedPoints.Count > 1)
         {
-            var lineAction = new DrawLineAction(drawingContext, StartPoint, AccumulatedPoints, Colors.Transparent, Size);
-            drawingContext.Execute(lineAction);
-                
-            AccumulatedPoints.Clear();
+            if (AccumulatedPoints.Count > 1)
+            {
+                LastPoint = AccumulatedPoints[0];
+                drawingContext.DrawLine(LastPoint, AccumulatedPoints, Colors.Transparent, Size);
+
+                AccumulatedPoints.Clear();
+                layerManager.ClearPreviewLayer();
+            }
         }
     }
 }

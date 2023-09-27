@@ -1,3 +1,4 @@
+using System;
 using Avalonia.Media.Imaging;
 
 namespace painternya.Extensions;
@@ -20,5 +21,22 @@ public static class WriteableBitmapExtensions
     {
         using var context = bitmap.Lock();
         context.SetPixel(x, y, color);
+    }
+    
+    public static void Clone(this WriteableBitmap destination, WriteableBitmap source)
+    {
+        if (source.PixelSize != destination.PixelSize)
+        {
+            throw new ArgumentException("Source and destination bitmaps must have the same dimensions.");
+        }
+
+        using var destContext = destination.Lock();
+        using var sourceContext = source.Lock();
+
+        var sizeInBytes = sourceContext.RowBytes * sourceContext.Size.Height;
+        unsafe
+        {
+            Buffer.MemoryCopy(sourceContext.Address.ToPointer(), destContext.Address.ToPointer(), sizeInBytes, sizeInBytes);
+        }
     }
 }

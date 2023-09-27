@@ -1,6 +1,7 @@
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 
 namespace painternya.Behaviors;
 
@@ -23,14 +24,21 @@ public class PointerPressedBehavior
 
     private static void HandleCommandChanged(Control control, AvaloniaPropertyChangedEventArgs e)
     {
+        control.PointerPressed -= Control_PointerPressed;
+
         if (e.NewValue is ICommand newCommand)
         {
-            // If the left mouse button is pressed, execute the command and send the position
-            // of the pointer as a parameter.
-            control.PointerPressed += (sender, args) =>
-            {
-                newCommand.Execute(args.GetPosition(control));
-            };
+            control.Tag = newCommand;
+            control.PointerPressed += Control_PointerPressed;
+        }
+    }
+
+    private static void Control_PointerPressed(object sender, PointerPressedEventArgs e)
+    {
+        if (sender is Control control && control.Tag is ICommand command)
+        {
+            command.Execute(e.GetPosition(control));
+            e.Handled = true;
         }
     }
 }

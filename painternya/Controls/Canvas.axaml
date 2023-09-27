@@ -10,8 +10,7 @@
              behaviors:PointerMovedBehavior.Command="{Binding PointerMovedCommand}"
              behaviors:PointerPressedBehavior.Command="{Binding PointerPressedCommand}"
              behaviors:PointerReleasedBehavior.Command="{Binding PointerReleasedCommand}"
-             x:Name="MainCanvas"
              Width="{Binding CanvasWidth}" Height="{Binding CanvasHeight}"
-             RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapInterpolationMode="None" RenderOptions.TextRenderingMode="Alias">
-    
+             Background="Transparent"
+             RenderOptions.EdgeMode="Antialias" RenderOptions.BitmapInterpolationMode="None" RenderOptions.TextRenderingMode="Alias">
 </UserControl>

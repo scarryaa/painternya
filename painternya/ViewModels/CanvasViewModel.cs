@@ -169,19 +169,20 @@ namespace painternya.ViewModels
 
         private void HandlePointerPressed(Point point)
         {
-            _currentTool.OnPointerPressed(_drawingContext, point, CurrentTool.Size);
+            Console.WriteLine(point);
+            _currentTool.OnPointerPressed(_drawingContext.LayerManager, _drawingContext, point, CurrentTool.Size);
             _lastPoint = point;
         }
         
         private void HandlePointerMoved(Point point)
         {
-            _currentTool.OnPointerMoved(_drawingContext, _drawingContext, point, CurrentTool.Size);
+            _currentTool.OnPointerMoved(_drawingContext, point, CurrentTool.Size);
             _lastPoint = point;
         }
         
         private void HandlePointerReleased(Point point)
         {
-            _currentTool.OnPointerReleased(_drawingContext, _drawingContext, point);
+            _currentTool.OnPointerReleased(_drawingContext.LayerManager, _drawingContext, point);
             _lastPoint = point;
         }
     }

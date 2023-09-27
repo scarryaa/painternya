@@ -11,7 +11,6 @@ namespace painternya.Services
 {
     public class TileManager
     {
-        // TODO - make this configurable
         private Tile[,] _tiles;
         private readonly OrderedDictionary _loadedTiles = new();
         private readonly int _maxLoadedTiles;
@@ -33,11 +32,11 @@ namespace painternya.Services
             }
         }
 
-        public void ClearAllTiles()
+        public void ClearAllTiles(Color color)
         {
-            foreach (var tile in _loadedTiles.Values)
+            foreach (var tile in _tiles)
             {
-                ((Tile)tile).Bitmap.Clear(Colors.Transparent);
+                (tile).Bitmap.Clear(color);
             }
         }
         

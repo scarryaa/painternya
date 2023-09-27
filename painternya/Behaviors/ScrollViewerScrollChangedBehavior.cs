@@ -1,3 +1,4 @@
+using System;
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
@@ -23,14 +24,21 @@ public class ScrollViewerScrollChangedBehavior
 
     private static void HandleCommandChanged(ScrollViewer control, AvaloniaPropertyChangedEventArgs e)
     {
+        control.ScrollChanged -= Control_ScrollChanged;
+
         if (e.NewValue is ICommand newCommand)
         {
-            // If the left mouse button is pressed, execute the command and send the position
-            // of the pointer as a parameter.
-            control.ScrollChanged += (sender, args) =>
-            {
-                newCommand.Execute(sender);
-            };
+            control.Tag = newCommand;
+            control.ScrollChanged += Control_ScrollChanged;
         }
     }
+
+    private static void Control_ScrollChanged(object sender, EventArgs e)
+    {
+        if (sender is ScrollViewer control && control.Tag is ICommand command)
+        {
+            command.Execute(sender);
+        }
+    }
+
 }

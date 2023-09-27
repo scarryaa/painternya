@@ -10,7 +10,7 @@ public class Tile
 {
     public int X { get; set; }
     public int Y { get; set; }
-    public WriteableBitmap Bitmap { get; }
+    public WriteableBitmap Bitmap { get; set; }
     public bool Dirty { get; set; }
     public bool IsVisible { get; set; }
     public int Width => Bitmap.PixelSize.Width;
@@ -18,7 +18,7 @@ public class Tile
     
     public Tile(int width, int height)
     {
-        Bitmap = new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96), PixelFormat.Bgra8888);
+        Bitmap = new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Unpremul);
         using (var context = Bitmap.Lock())
         {
             for (int x = 0; x < width; x++)
