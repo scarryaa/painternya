@@ -139,8 +139,9 @@ namespace painternya.ViewModels
             
             MessagingService.Instance.Subscribe((message, data) =>
             {
-                if (message == MessageType.LayerRemoved)
+                if (message is MessageType.LayerRemoved or MessageType.LayerVisibilityChanged or MessageType.LayerAdded)
                 {
+                    Console.WriteLine("Invalidate requested " + message + ", " + data);
                     InvalidateRequested?.Invoke();
                 }
             });

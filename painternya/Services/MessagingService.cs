@@ -32,5 +32,7 @@ public class MessagingService
 
 public enum MessageType
 {
-    LayerRemoved
+    LayerRemoved,
+    LayerVisibilityChanged,
+    LayerAdded
 }

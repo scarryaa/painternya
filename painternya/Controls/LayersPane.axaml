@@ -26,11 +26,13 @@
                             <StackPanel.RenderTransform>
                                 <ScaleTransform ScaleY="-1" />
                             </StackPanel.RenderTransform>
-                            <CheckBox IsChecked="{Binding IsVisible}" />
+                            <CheckBox IsChecked="{Binding Layer.IsVisible, Mode=TwoWay}"
+                                      Command="{Binding ToggleVisibilityCommand}"
+                                      CommandParameter="{Binding}"/>
                             <!-- Thumbnail -->
                             <Image Width="40" Height="40"/>
                             <!-- Layer Name -->
-                            <TextBlock Text="{Binding Name}" />
+                            <TextBlock Text="{Binding Layer.Name}" />
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

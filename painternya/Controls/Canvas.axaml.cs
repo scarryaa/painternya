@@ -101,6 +101,8 @@ namespace painternya.Controls
 
         private void RenderLayer(Layer layer, DrawingContext context)
         {
+            if (!layer.IsVisible) return;
+            
             foreach (var tile in layer.TileManager.GetAllTiles())
             {
                 var sourceWidth = tile.Width;

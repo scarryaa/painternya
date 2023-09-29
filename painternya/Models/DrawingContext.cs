@@ -16,7 +16,7 @@ public class DrawingContext
 {    
     private double _currentZoom = 1.0;
     private readonly LayerManager _layerManager;
-    private TileManager CurrentTileManager => _layerManager.ActiveLayer.TileManager;
+    private TileManager? CurrentTileManager => _layerManager.ActiveLayer?.TileManager ?? null;
     private int _totalWidth;
     private int _totalHeight;
     private readonly Subject<Unit> _drawingChangedSubject;
@@ -159,6 +159,9 @@ public class DrawingContext
                     int tileX = absoluteX / TileManager.TileSize;
                     int tileY = absoluteY / TileManager.TileSize;
                 
+                    if (LayerManager.ActiveLayer == null)
+                        return;
+                    
                     var tile = CurrentTileManager.GetTile(tileX, tileY);
                 
                     int pixelX = absoluteX % TileManager.TileSize;

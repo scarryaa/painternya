@@ -30,6 +30,9 @@ namespace painternya.Tools
         public void OnPointerPressed(LayerManager layerManager, DrawingContext drawingContext, Point point, int brushSize)
         {
             ActiveLayer = layerManager.ActiveLayer;
+            if (ActiveLayer == null)
+                return;
+            
             layerManager.SetActiveLayer(layerManager.PreviewLayer);
         
             StartPoint = point;

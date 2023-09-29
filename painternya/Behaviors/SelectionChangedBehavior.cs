@@ -31,6 +31,7 @@ public static class SelectionChangedBehavior
             // of the pointer as a parameter.
             control.SelectionChanged += (sender, args) =>
             {
+                if (args.AddedItems.Count == 0) return;
                 newCommand.Execute(args.AddedItems[0]);
             };
         }
