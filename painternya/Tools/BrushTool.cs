@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Avalonia;
 using Avalonia.Media;
@@ -27,6 +28,7 @@ public class BrushTool : ITool
     public void OnPointerPressed(LayerManager layerManager, DrawingContext drawingContext, Point point, int brushSize)
     {
         ActiveLayer = layerManager.ActiveLayer;
+        Console.WriteLine(ActiveLayer.Name);
         layerManager.SetActiveLayer(layerManager.PreviewLayer);
         
         StartPoint = point;
@@ -47,6 +49,7 @@ public class BrushTool : ITool
     public void OnPointerReleased(LayerManager layerManager, DrawingContext drawingContext, Point point)
     {
         layerManager.SetActiveLayer(ActiveLayer);
+        
         if (AccumulatedPoints.Count > 1)
         {
             LastPoint = AccumulatedPoints[0];

@@ -127,9 +127,9 @@ namespace painternya.ViewModels
         
         public CanvasViewModel() {}
         
-        public CanvasViewModel(int canvasWidth, int canvasHeight)
+        public CanvasViewModel(LayerManager layerManager, int canvasWidth, int canvasHeight)
         {
-            _drawingContext = new DrawingContext(new LayerManager(canvasWidth, canvasHeight), this, canvasWidth, canvasHeight);
+            _drawingContext = new DrawingContext(layerManager, this, canvasWidth, canvasHeight);
             CurrentTool = Pencil;
             _horizontalOffsetChangedSubject
                 .Merge(_verticalOffsetChangedSubject)
@@ -169,7 +169,6 @@ namespace painternya.ViewModels
 
         private void HandlePointerPressed(Point point)
         {
-            Console.WriteLine(point);
             _currentTool.OnPointerPressed(_drawingContext.LayerManager, _drawingContext, point, CurrentTool.Size);
             _lastPoint = point;
         }

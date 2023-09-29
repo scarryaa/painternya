@@ -3,8 +3,10 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
+using painternya.Controls;
 using painternya.Interfaces;
 using painternya.Models;
+using painternya.Services;
 using ReactiveUI;
 
 namespace painternya.ViewModels;
@@ -12,7 +14,8 @@ namespace painternya.ViewModels;
 public class MainWindowViewModel : ViewModelBase
 {
     private readonly IDialogService _dialogService;
-    private CanvasViewModel? _canvasVm = new CanvasViewModel(0, 0);
+    private CanvasViewModel? _canvasVm;
+    private LayersPaneViewModel? _layersPaneVm;
     private double _zoom = 1.0;
     private double _translateX;
     private double _translateY;
@@ -22,6 +25,12 @@ public class MainWindowViewModel : ViewModelBase
     {
         get => _canvasVm;
         set => this.RaiseAndSetIfChanged(ref _canvasVm, value);
+    }
+    
+    public LayersPaneViewModel? LayersPaneVm
+    {
+        get => _layersPaneVm;
+        set => this.RaiseAndSetIfChanged(ref _layersPaneVm, value);
     }
     
     public Vector Viewport
@@ -70,7 +79,7 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand ZoomCommand { get; set; }
 
     public MainWindowViewModel(IDialogService dialogService)
-    {   
+    {
         _dialogService = dialogService;
         SelectToolCommand = ReactiveCommand.Create<string>(tool => CanvasVm?.SelectTool(tool));
         
@@ -117,7 +126,9 @@ public class MainWindowViewModel : ViewModelBase
 
         if (result is { Success: true })
         {
-            CanvasVm = new CanvasViewModel(result.Width, result.Height);
+            var newLayerManager = new LayerManager(result.Width, result.Height);
+            CanvasVm = new CanvasViewModel(newLayerManager, result.Width, result.Height);
+            LayersPaneVm = new LayersPaneViewModel(newLayerManager);
         }
     }
     

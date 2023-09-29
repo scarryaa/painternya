@@ -29,6 +29,7 @@ class Program
         
         var serviceCollection = new ServiceCollection();
         serviceCollection.AddSingleton<IDialogService, DialogService>();
+        serviceCollection.AddSingleton<LayerManager>(sp => new LayerManager(500, 500));
         
         ServiceProvider = serviceCollection.BuildServiceProvider();
         

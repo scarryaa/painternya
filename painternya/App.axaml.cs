@@ -4,6 +4,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using painternya.Interfaces;
+using painternya.Services;
 using painternya.ViewModels;
 using painternya.Views;
 

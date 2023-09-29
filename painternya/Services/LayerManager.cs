@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using DynamicData.Binding;
 using painternya.Extensions;
 using painternya.Models;
 using Bitmap = System.Drawing.Bitmap;
@@ -11,8 +13,8 @@ namespace painternya.Services
 {
     public class LayerManager
     {
-        private readonly List<Layer> _layers = new();
-        public IReadOnlyList<Layer> Layers => _layers.AsReadOnly();
+        private ObservableCollection<Layer> _layers = new();
+        public ObservableCollection<Layer> Layers => _layers;
         public Layer ActiveLayer { get; set; }
         public Layer PreviewLayer { get; private set; }
         public int TotalWidth { get; set; }
@@ -36,6 +38,7 @@ namespace painternya.Services
         
         public void AddLayer(Layer layer)
         {
+            Console.WriteLine($"Added layer {layer.Name}");
             _layers.Add(layer);
         }
         
@@ -77,14 +80,13 @@ namespace painternya.Services
             ActiveLayer = _layers[index];
         }
         
-        public List<Layer> GetAllLayers()
+        public ObservableCollection<Layer> GetAllLayers()
         {
             return _layers;
         }
         
         public void MergePreviewToActiveLayer()
         {
-            // Logic to merge the PreviewLayer contents to the ActiveLayer
             foreach (var tile in PreviewLayer.TileManager.GetAllTiles())
             {
                 tile.Bitmap.Clone(_layers[0].TileManager.GetTile(tile.X, tile.Y).Bitmap);
