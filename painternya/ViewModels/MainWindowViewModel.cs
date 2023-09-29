@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia;
@@ -14,53 +15,15 @@ namespace painternya.ViewModels;
 public class MainWindowViewModel : ViewModelBase
 {
     private readonly IDialogService _dialogService;
-    private CanvasViewModel? _canvasVm;
-    private LayersPaneViewModel? _layersPaneVm;
-    private double _zoom = 1.0;
-    private double _translateX;
-    private double _translateY;
-    private Vector _viewport;
-
-    public CanvasViewModel? CanvasVm
+    private ImageTabViewModel? _activeImageTab;
+    
+    public ImageTabViewModel ActiveImageTab
     {
-        get => _canvasVm;
-        set => this.RaiseAndSetIfChanged(ref _canvasVm, value);
+        get => _activeImageTab ??= ImageTabs[0];
+        set => this.RaiseAndSetIfChanged(ref _activeImageTab, value);
     }
     
-    public LayersPaneViewModel? LayersPaneVm
-    {
-        get => _layersPaneVm;
-        set => this.RaiseAndSetIfChanged(ref _layersPaneVm, value);
-    }
-    
-    public Vector Viewport
-    {
-        get
-        {
-            if (CanvasVm == null) return new Vector(0, 0);
-            return new Vector(CanvasVm.CanvasWidth * Zoom, CanvasVm.CanvasHeight * Zoom);
-        }
-        set => this.RaiseAndSetIfChanged(ref _viewport, value);
-    }
-    
-    public double Zoom
-    {
-        get => _zoom;
-        set => this.RaiseAndSetIfChanged(ref _zoom, value);
-    }
-    
-    public double TranslateX
-    {
-        get => _translateX;
-        set => this.RaiseAndSetIfChanged(ref _translateX, value);
-    }
-    
-    public double TranslateY
-    {
-        get => _translateY;
-        set => this.RaiseAndSetIfChanged(ref _translateY, value);
-    }
-    
+    public ObservableCollection<ImageTabViewModel> ImageTabs { get; } = new();
     public ICommand SelectToolCommand { get; set; }
     public ICommand NewCommand { get; set; }
     public ICommand OpenCommand { get; set; }
@@ -74,14 +37,13 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand PasteCommand { get; set; }
     public ICommand DeleteCommand { get; set; }
     public ICommand SelectAllCommand { get; set; }
-    
-    public ICommand ScrolledCommand { get; set; }
-    public ICommand ZoomCommand { get; set; }
 
+    public MainWindowViewModel() {}
+    
     public MainWindowViewModel(IDialogService dialogService)
     {
         _dialogService = dialogService;
-        SelectToolCommand = ReactiveCommand.Create<string>(tool => CanvasVm?.SelectTool(tool));
+        SelectToolCommand = ReactiveCommand.Create<string>(tool => ActiveImageTab.CanvasViewModel?.SelectTool(tool));
         
         NewCommand = ReactiveCommand.Create(New);
         OpenCommand = ReactiveCommand.Create(Open);
@@ -95,29 +57,17 @@ public class MainWindowViewModel : ViewModelBase
         PasteCommand = ReactiveCommand.Create(Paste);
         DeleteCommand = ReactiveCommand.Create(Delete);
         SelectAllCommand = ReactiveCommand.Create(SelectAll);
-        
-        ScrolledCommand = ReactiveCommand.Create<object>(Scrolled);
-        ZoomCommand = ReactiveCommand.Create<PointerWheelChangedArgs>(ZoomAtPoint);
     }
     
-    public void ZoomAtPoint(PointerWheelChangedArgs args)
+    public void AddTab()
     {
-        double oldZoom = Zoom;
-        
-        double zoomFactor = args.Delta > 0 ? 1.01 : 0.99;
-
-        Zoom *= zoomFactor;
-
-        if (Zoom < 0.1) Zoom = 0.1;
-        if (Zoom > 10) Zoom = 10;
-
-        TranslateX = (args.Position.X + TranslateX) * zoomFactor - args.Position.X;
-        TranslateY = (args.Position.Y + TranslateY) * zoomFactor - args.Position.Y;
-        CanvasVm.Offset = new Vector(TranslateX, TranslateY);
-        CanvasVm.DrawingContext.Zoom = Zoom;
-        CanvasVm.DrawingContext.Viewport = Viewport;
+        ImageTabs.Add(new ImageTabViewModel { Title = "New Tab" });
     }
 
+    public void RemoveTab(ImageTabViewModel imageTab)
+    {
+        ImageTabs.Remove(imageTab);
+    }
     
     private async Task ShowNewCanvasDialogAsync()
     {
@@ -127,23 +77,14 @@ public class MainWindowViewModel : ViewModelBase
         if (result is { Success: true })
         {
             var newLayerManager = new LayerManager(result.Width, result.Height);
-            CanvasVm = new CanvasViewModel(newLayerManager, result.Width, result.Height);
-            LayersPaneVm = new LayersPaneViewModel(newLayerManager);
+            var newCanvasVm = new CanvasViewModel(newLayerManager, result.Width, result.Height);
+            var newTabVm = new ImageTabViewModel { Title = "New Tab", CanvasViewModel = newCanvasVm };
+            
+            ImageTabs.Add(newTabVm);
+            ActiveImageTab = newTabVm;
         }
     }
     
-    private void Scrolled(object sender)
-    {
-        var scrollViewer = sender as ScrollViewer;
-        if (scrollViewer == null) return;
-
-        if (CanvasVm == null) return;
-        
-        CanvasVm.OffsetX = scrollViewer.Offset.X;
-        CanvasVm.OffsetY = scrollViewer.Offset.Y;
-        // CanvasVm.TileManager.UpdateTileVisibilities();
-    }
-
     private async Task New()
     {
         await ShowNewCanvasDialogAsync();

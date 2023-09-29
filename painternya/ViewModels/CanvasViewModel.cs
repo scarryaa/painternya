@@ -20,7 +20,7 @@ using DrawingContext = painternya.Models.DrawingContext;
 
 namespace painternya.ViewModels
 {
-    public class CanvasViewModel : ViewModelBase, IOffsetObserver
+    public class CanvasViewModel : ViewModelBase, IOffsetObserver, IDisposable
     {
         private Point _lastPoint;
         private int _canvasHeight;
@@ -33,6 +33,7 @@ namespace painternya.ViewModels
         private Vector _offset;
         private static int _globalCurrentToolSize = 4;
         private ITool _currentTool;
+        private Action<MessageType, object>? _messageSubscription;
         
         private ITool _pencil = new PencilTool(_globalCurrentToolSize);
         private ITool _eraser = new EraserTool(_globalCurrentToolSize);
@@ -137,14 +138,16 @@ namespace painternya.ViewModels
                 .ObserveOn(AvaloniaScheduler.Instance)
                 .Subscribe(_ => InvalidateRequested?.Invoke());
             
-            MessagingService.Instance.Subscribe((message, data) =>
+            _messageSubscription = (message, data) =>
             {
                 if (message is MessageType.LayerRemoved or MessageType.LayerVisibilityChanged or MessageType.LayerAdded)
                 {
                     Console.WriteLine("Invalidate requested " + message + ", " + data);
                     InvalidateRequested?.Invoke();
                 }
-            });
+            };
+            
+            MessagingService.Instance.Subscribe(_messageSubscription);
             
             PointerMovedCommand = ReactiveCommand.Create<Point>(HandlePointerMoved);
             PointerPressedCommand = ReactiveCommand.Create<Point>(HandlePointerPressed);
@@ -158,6 +161,11 @@ namespace painternya.ViewModels
                 .Subscribe(_ => InvalidateRequested?.Invoke());
         }
         
+        ~CanvasViewModel()
+        {
+            Dispose(false);
+        }
+
         public void SelectTool(string tool)
         {
             switch (tool)
@@ -192,6 +200,26 @@ namespace painternya.ViewModels
         {
             _currentTool.OnPointerReleased(_drawingContext.LayerManager, _drawingContext, point);
             _lastPoint = point;
+        }
+
+        private void ReleaseUnmanagedResources() {}
+
+        private void Dispose(bool disposing)
+        {
+            ReleaseUnmanagedResources();
+            if (disposing)
+            {
+                _horizontalOffsetChangedSubject.Dispose();
+                _verticalOffsetChangedSubject.Dispose();
+                
+                MessagingService.Instance.Unsubscribe(_messageSubscription);
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

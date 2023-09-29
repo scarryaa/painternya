@@ -15,11 +15,16 @@
             <Button Content="Remove Layer" Command="{Binding RemoveLayerCommand}"/>
         </StackPanel>
         <ScrollViewer DockPanel.Dock="Bottom" VerticalScrollBarVisibility="Auto">
-            <ListBox ItemsSource="{Binding Layers}" SelectedItem="{Binding ActiveLayer, Mode=TwoWay}"
+            <ListBox DragDrop.AllowDrop="True" ItemsSource="{Binding Layers}" SelectedItem="{Binding ActiveLayer, Mode=TwoWay}"
                      behaviors:SelectionChangedBehavior.Command="{Binding SelectionChangedCommand}">
                 <ListBox.RenderTransform>
                     <ScaleTransform ScaleY="-1" />
                 </ListBox.RenderTransform>
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Vertical"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">

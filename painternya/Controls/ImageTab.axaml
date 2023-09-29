@@ -1,0 +1,28 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:behaviors="clr-namespace:painternya.Behaviors"
+             xmlns:controls="clr-namespace:painternya.Controls"
+             xmlns:viewModels="clr-namespace:painternya.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="viewModels:ImageTabViewModel"
+             x:Class="painternya.Controls.ImageTab">
+    
+    <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Grid.Row="3" Grid.Column="1" Background="Gray"
+                  behaviors:ScrollViewerScrollChangedBehavior.Command="{Binding ScrolledCommand}"
+                  Offset="{Binding CanvasViewModel.Offset, Mode=TwoWay}"
+                  Viewport="{Binding Viewport, Mode=OneTime}">
+        <LayoutTransformControl>
+            <LayoutTransformControl.LayoutTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="{Binding Zoom}" ScaleY="{Binding Zoom}"/>
+                </TransformGroup>
+            </LayoutTransformControl.LayoutTransform>
+
+            <Border Background="Transparent" behaviors:PointerWheelChangedBehavior.Command="{Binding ZoomCommand}">
+                <controls:Canvas DataContext="{Binding CanvasViewModel}"></controls:Canvas>
+            </Border>
+        </LayoutTransformControl>
+    </ScrollViewer>
+</UserControl>

@@ -23,47 +23,57 @@
     
     <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" ColumnDefinitions="Auto,*">
         <!-- Top File Menu -->
-        <Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
-            <MenuItem Header="File">
-                <MenuItem Header="New" Command="{Binding NewCommand}"/>
-                <MenuItem Header="Open" Command="{Binding OpenCommand}"/>
-                <MenuItem Header="Save" Command="{Binding SaveCommand}"/>
-                <MenuItem Header="Save As" Command="{Binding SaveAsCommand}"/>
-                <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>
-            </MenuItem>
-            <MenuItem Header="Edit">
-                <MenuItem Header="Undo" Command="{Binding UndoCommand}"/>
-                <MenuItem Header="Redo" Command="{Binding RedoCommand}"/>
-                <MenuItem Header="Cut" Command="{Binding CutCommand}"/>
-                <MenuItem Header="Copy" Command="{Binding CopyCommand}"/>
-                <MenuItem Header="Paste" Command="{Binding PasteCommand}"/>
-                <MenuItem Header="Delete" Command="{Binding DeleteCommand}"/>
-                <MenuItem Header="Select All" Command="{Binding SelectAllCommand}"/>
-            </MenuItem>
-        </Menu>
+        <Grid Grid.ColumnDefinitions="Auto,*" Grid.RowDefinitions="Auto, Auto, Auto" Grid.Row="0" Grid.ColumnSpan="2">
+            <Menu Grid.Column="0">
+                <MenuItem Header="File">
+                    <MenuItem Header="New" Command="{Binding NewCommand}"/>
+                    <MenuItem Header="Open" Command="{Binding OpenCommand}"/>
+                    <MenuItem Header="Save" Command="{Binding SaveCommand}"/>
+                    <MenuItem Header="Save As" Command="{Binding SaveAsCommand}"/>
+                    <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>
+                </MenuItem>
+                <MenuItem Header="Edit">
+                    <MenuItem Header="Undo" Command="{Binding UndoCommand}"/>
+                    <MenuItem Header="Redo" Command="{Binding RedoCommand}"/>
+                    <MenuItem Header="Cut" Command="{Binding CutCommand}"/>
+                    <MenuItem Header="Copy" Command="{Binding CopyCommand}"/>
+                    <MenuItem Header="Paste" Command="{Binding PasteCommand}"/>
+                    <MenuItem Header="Delete" Command="{Binding DeleteCommand}"/>
+                    <MenuItem Header="Select All" Command="{Binding SelectAllCommand}"/>
+                </MenuItem>
+            </Menu>
         
-        <!-- Top bar -->
-        <StackPanel Height="35" Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" x:Name="TopToolBar">
-            <Button Height="35" Width="35" Command="{Binding NewCommand}" Content="New" avalonia:Attached.Icon="fa-solid fa-file"/>
-            <Button Height="35" Width="35" Command="{Binding OpenCommand}" Content="Open" avalonia:Attached.Icon="fa-solid fa-folder-open"/>
-            <Button Height="35" Width="35" Command="{Binding SaveCommand}" Content="Save" avalonia:Attached.Icon="fa-solid fa-floppy-disk"/>
-            <Button Height="35" Width="35" Command="{Binding SaveAsCommand}" Content="Save As" avalonia:Attached.Icon="fa-solid fa-file-export"/>
-            <Button Height="35" Width="35" Command="{Binding UndoCommand}" Content="Undo" avalonia:Attached.Icon="fa-solid fa-rotate-left"/>
-            <Button Height="35" Width="35" Command="{Binding RedoCommand}" Content="Redo" avalonia:Attached.Icon="fa-solid fa-rotate-right"/>
-            <Button Height="35" Width="35" Command="{Binding CutCommand}" Content="Cut" avalonia:Attached.Icon="fa-solid fa-scissors"/>
-            <Button Height="35" Width="35" Command="{Binding CopyCommand}" Content="Copy" avalonia:Attached.Icon="fa-solid fa-copy"/>
-            <Button Height="35" Width="35" Command="{Binding PasteCommand}" Content="Paste" avalonia:Attached.Icon="fa-solid fa-clipboard"/>
-            <Button Height="35" Width="35" Command="{Binding DeleteCommand}" Content="Delete" avalonia:Attached.Icon="fa-solid fa-xmark"/>
-            <Button Height="35" Width="35" Command="{Binding SelectAllCommand}" Content="Select All" avalonia:Attached.Icon="fa-solid fa-object-group"/>
-        </StackPanel>
-        
-        <!-- Top sub bar -->
-        <StackPanel Height="35" Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
-            <TextBlock Text="Current Tool:"></TextBlock>
-            <ComboBox Margin="5 0 0 5" Width="100" ItemsSource="{Binding CanvasVm.Tools}" SelectedItem="{Binding CanvasVm.CurrentTool, Mode=TwoWay, FallbackValue={x:Static tools:PencilTool.Name}}" DisplayMemberBinding="{Binding CurrentToolName}"></ComboBox>
-            <TextBlock Text="Size:"></TextBlock>
-            <TextBox Margin="5 0 0 5" Width="50" Text="{Binding CanvasVm.GlobalCurrentToolSize, Mode=TwoWay}"></TextBox>
-        </StackPanel>
+            <TabControl Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" ItemsSource="{Binding ImageTabs}" SelectedItem="{Binding ActiveImageTab, Mode=TwoWay}">
+                <TabControl.DataTemplates>
+                    <DataTemplate DataType="{x:Type vm:ImageTabViewModel}">
+                        <TextBlock Text="AAAAA" />
+                    </DataTemplate>
+                </TabControl.DataTemplates>
+            </TabControl>
+            
+            <!-- Top bar -->
+            <StackPanel Height="35" Orientation="Horizontal" Grid.Row="1" Grid.Column="0" x:Name="TopToolBar">
+                <Button Height="35" Width="35" Command="{Binding NewCommand}" Content="New" avalonia:Attached.Icon="fa-solid fa-file"/>
+                <Button Height="35" Width="35" Command="{Binding OpenCommand}" Content="Open" avalonia:Attached.Icon="fa-solid fa-folder-open"/>
+                <Button Height="35" Width="35" Command="{Binding SaveCommand}" Content="Save" avalonia:Attached.Icon="fa-solid fa-floppy-disk"/>
+                <Button Height="35" Width="35" Command="{Binding SaveAsCommand}" Content="Save As" avalonia:Attached.Icon="fa-solid fa-file-export"/>
+                <Button Height="35" Width="35" Command="{Binding UndoCommand}" Content="Undo" avalonia:Attached.Icon="fa-solid fa-rotate-left"/>
+                <Button Height="35" Width="35" Command="{Binding RedoCommand}" Content="Redo" avalonia:Attached.Icon="fa-solid fa-rotate-right"/>
+                <Button Height="35" Width="35" Command="{Binding CutCommand}" Content="Cut" avalonia:Attached.Icon="fa-solid fa-scissors"/>
+                <Button Height="35" Width="35" Command="{Binding CopyCommand}" Content="Copy" avalonia:Attached.Icon="fa-solid fa-copy"/>
+                <Button Height="35" Width="35" Command="{Binding PasteCommand}" Content="Paste" avalonia:Attached.Icon="fa-solid fa-clipboard"/>
+                <Button Height="35" Width="35" Command="{Binding DeleteCommand}" Content="Delete" avalonia:Attached.Icon="fa-solid fa-xmark"/>
+                <Button Height="35" Width="35" Command="{Binding SelectAllCommand}" Content="Select All" avalonia:Attached.Icon="fa-solid fa-object-group"/>
+            </StackPanel>
+            
+            <!-- Top sub bar -->
+            <StackPanel Height="35" Orientation="Horizontal" Grid.Row="2" Grid.Column="0">
+                <TextBlock Text="Current Tool:"></TextBlock>
+                <ComboBox Margin="5 0 0 5" Width="100" ItemsSource="{Binding ActiveImageTab.CanvasViewModel.Tools}" SelectedItem="{Binding ActiveImageTab.CanvasViewModel.CurrentTool, Mode=TwoWay, FallbackValue={x:Static tools:PencilTool.Name}}" DisplayMemberBinding="{Binding CurrentToolName}"></ComboBox>
+                <TextBlock Text="Size:"></TextBlock>
+                <TextBox Margin="5 0 0 5" Width="50" Text="{Binding ActiveImageTab.CanvasViewModel.GlobalCurrentToolSize, Mode=TwoWay}"></TextBox>
+            </StackPanel>
+        </Grid>
         
         <!-- Left bar -->
         <StackPanel Width="140" Orientation="Vertical" Grid.Row="3" Grid.Column="0">
@@ -72,25 +82,19 @@
             <Button Width="35" Height="35" avalonia:Attached.Icon="{x:Static tools:EraserTool.Icon}" Command="{Binding SelectToolCommand}" CommandParameter="{x:Static tools:EraserTool.Name}"/>
             <Button Width="35" Height="35" avalonia:Attached.Icon="fa-regular fa-square"/>
             <Button Width="35" Height="35" avalonia:Attached.Icon="fa-solid fa-up-down-left-right"/>
-            <controls:LayersPane DataContext="{Binding LayersPaneVm}"></controls:LayersPane>
+            <controls:LayersPane DataContext="{Binding ActiveImageTab.LayersPaneVm}"></controls:LayersPane>
         </StackPanel>
-        
-        <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Grid.Row="3" Grid.Column="1" Background="Gray"
-                      behaviors:ScrollViewerScrollChangedBehavior.Command="{Binding ScrolledCommand}"
-                      Offset="{Binding CanvasVm.Offset, Mode=TwoWay}"
-                      Viewport="{Binding Viewport, Mode=OneTime}">
-            <LayoutTransformControl>
-                <LayoutTransformControl.LayoutTransform>
-                    <TransformGroup>
-                        <ScaleTransform ScaleX="{Binding Zoom}" ScaleY="{Binding Zoom}"/>
-                    </TransformGroup>
-                </LayoutTransformControl.LayoutTransform>
 
-                <Border Background="Transparent" behaviors:PointerWheelChangedBehavior.Command="{Binding ZoomCommand}">
-                    <controls:Canvas DataContext="{Binding CanvasVm}"></controls:Canvas>
-                </Border>
-            </LayoutTransformControl>
-        </ScrollViewer>
+        <TabControl Grid.Row="3" Grid.Column="1" ItemsSource="{Binding ImageTabs}" SelectedItem="{Binding ActiveImageTab, Mode=TwoWay}">
+            <TabControl.DataTemplates>
+                <DataTemplate DataType="{x:Type vm:ImageTabViewModel}"/>
+            </TabControl.DataTemplates>
+            <TabControl.ContentTemplate>
+                <DataTemplate DataType="{x:Type vm:ImageTabViewModel}">
+                    <controls:ImageTab />
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+        </TabControl>
         
         <!-- Bottom bar -->
         <StackPanel Height="35" Orientation="Horizontal" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2">
