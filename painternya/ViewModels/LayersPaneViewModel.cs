@@ -10,9 +10,10 @@ namespace painternya.ViewModels
 {
     public class LayersPaneViewModel : ViewModelBase
     {
-        private Layer _activeLayer;
+        private int _layerCount = 1;
+        private Layer? _activeLayer;
         public ObservableCollection<Layer> Layers { get; set; }
-        public Layer ActiveLayer
+        public Layer? ActiveLayer
         {
             get => _activeLayer;
             set => this.RaiseAndSetIfChanged(ref _activeLayer, value);
@@ -27,13 +28,31 @@ namespace painternya.ViewModels
             ActiveLayer = layerManager.ActiveLayer;
 
             AddLayerCommand = ReactiveCommand.Create(() =>
-                layerManager.AddLayer(new Layer($"Layer {Layers.Count + 1}", 500, 500)));
+            {
+                layerManager.AddLayer(new Layer($"Layer {++_layerCount}", 500, 500));
+                ActiveLayer = layerManager.ActiveLayer;
+            });
+            
             RemoveLayerCommand = ReactiveCommand.Create(() =>
             {
                 var oldActiveLayer = ActiveLayer;
-                layerManager.SetActiveLayer(0);
+                var oldIndex = layerManager.Layers.IndexOf(oldActiveLayer);
+                if (layerManager.Layers.Count > 1 && oldIndex != 0)
+                {
+                    layerManager.SetActiveLayer(oldIndex - 1);
+                } else if (oldIndex == 0 && layerManager.Layers.Count > 1)
+                {
+                    layerManager.SetActiveLayer(1);
+                }
+                else
+                {
+                    layerManager.SetActiveLayer(null);
+                }
+                
                 ActiveLayer = layerManager.ActiveLayer;
-                layerManager.Layers.Remove(oldActiveLayer);
+                if (oldActiveLayer != null) layerManager.Layers.Remove(oldActiveLayer);
+                
+                MessagingService.Instance.Publish(MessageType.LayerRemoved);
             });
             SelectionChangedCommand = ReactiveCommand.Create<Layer>(layerManager.SetActiveLayer);
         }

@@ -14,5 +14,6 @@ public class Layer
     {
         TileManager = new TileManager(width, height);
         Name = name;
+        IsVisible = true;
     }
 }

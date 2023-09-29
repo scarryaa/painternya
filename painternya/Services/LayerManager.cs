@@ -15,7 +15,7 @@ namespace painternya.Services
     {
         private ObservableCollection<Layer> _layers = new();
         public ObservableCollection<Layer> Layers => _layers;
-        public Layer ActiveLayer { get; set; }
+        public Layer? ActiveLayer { get; set; }
         public Layer PreviewLayer { get; private set; }
         public int TotalWidth { get; set; }
         public int TotalHeight { get; set; }
@@ -26,7 +26,7 @@ namespace painternya.Services
             TotalHeight = totalHeight;
             _layers.Add(new Layer("Layer 1",TotalWidth, TotalHeight));
             
-            ActiveLayer = _layers[0];
+            ActiveLayer = _layers.Count > 0 ? _layers[0] : null;
             ActiveLayer.TileManager.ClearAllTiles(Colors.White);
             PreviewLayer = new Layer("Preview", TotalWidth, TotalHeight);
         }
@@ -38,8 +38,8 @@ namespace painternya.Services
         
         public void AddLayer(Layer layer)
         {
-            Console.WriteLine($"Added layer {layer.Name}");
             _layers.Add(layer);
+            ActiveLayer = layer;
         }
         
         public void RemoveLayer(Layer layer)
@@ -67,7 +67,7 @@ namespace painternya.Services
             _layers.Clear();
         }
         
-        public void SetActiveLayer(Layer layer)
+        public void SetActiveLayer(Layer? layer)
         {
             ActiveLayer = layer;
         }

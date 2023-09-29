@@ -137,6 +137,14 @@ namespace painternya.ViewModels
                 .ObserveOn(AvaloniaScheduler.Instance)
                 .Subscribe(_ => InvalidateRequested?.Invoke());
             
+            MessagingService.Instance.Subscribe((message, data) =>
+            {
+                if (message == MessageType.LayerRemoved)
+                {
+                    InvalidateRequested?.Invoke();
+                }
+            });
+            
             PointerMovedCommand = ReactiveCommand.Create<Point>(HandlePointerMoved);
             PointerPressedCommand = ReactiveCommand.Create<Point>(HandlePointerPressed);
             PointerReleasedCommand = ReactiveCommand.Create<Point>(HandlePointerReleased);
