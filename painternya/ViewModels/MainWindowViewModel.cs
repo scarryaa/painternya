@@ -15,11 +15,11 @@ namespace painternya.ViewModels;
 public class MainWindowViewModel : ViewModelBase
 {
     private readonly IDialogService _dialogService;
-    private ImageTabViewModel? _activeImageTab;
+    private ImageTabViewModel? _activeImageTab = null;
     
     public ImageTabViewModel ActiveImageTab
     {
-        get => _activeImageTab ??= ImageTabs[0];
+        get => _activeImageTab;
         set
         {
             this.RaiseAndSetIfChanged(ref _activeImageTab, value);
@@ -36,6 +36,7 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
     
+    public ICommand CloseCommand { get; set; }
     public ICommand TabControlSelectionChangedCommand { get; set; }
     public ObservableCollection<ImageTabViewModel> ImageTabs { get; } = new();
     public ICommand SelectToolCommand { get; set; }
@@ -72,6 +73,7 @@ public class MainWindowViewModel : ViewModelBase
         DeleteCommand = ReactiveCommand.Create(Delete);
         SelectAllCommand = ReactiveCommand.Create(SelectAll);
         
+        CloseCommand = ReactiveCommand.Create<ImageTabViewModel>(RemoveTab);
         TabControlSelectionChangedCommand = ReactiveCommand.Create<TabControl>(tabControl =>
         {
             if (tabControl.SelectedItem is ImageTabViewModel imageTab)
@@ -83,11 +85,16 @@ public class MainWindowViewModel : ViewModelBase
     
     public void AddTab()
     {
-        ImageTabs.Add(new ImageTabViewModel { Title = "New Tab " + ImageTabs.Count });
+        ImageTabs.Add(new ImageTabViewModel(CloseCommand, new LayersPaneViewModel(new LayerManager(500, 500)))
+        {
+            Title = "New Tab " + ImageTabs.Count
+        });
     }
 
     public void RemoveTab(ImageTabViewModel imageTab)
     {
+        imageTab.LayersPaneVm = null;
+        imageTab.CanvasViewModel.Dispose();
         ImageTabs.Remove(imageTab);
     }
     
@@ -100,7 +107,11 @@ public class MainWindowViewModel : ViewModelBase
         {
             var newLayerManager = new LayerManager(result.Width, result.Height);
             var newCanvasVm = new CanvasViewModel(newLayerManager, result.Width, result.Height);
-            var newTabVm = new ImageTabViewModel { Title = "New Tab " + ImageTabs.Count, CanvasViewModel = newCanvasVm };
+            var newTabVm = new ImageTabViewModel(CloseCommand, new LayersPaneViewModel(newLayerManager))
+            {
+                Title = "New Tab " + ImageTabs.Count,
+                CanvasViewModel = newCanvasVm
+            };
             
             ImageTabs.Add(newTabVm);
             ActiveImageTab = newTabVm;

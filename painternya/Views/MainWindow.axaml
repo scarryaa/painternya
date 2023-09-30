@@ -46,7 +46,10 @@
             <TabControl Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" ItemsSource="{Binding ImageTabs}" SelectedItem="{Binding ActiveImageTab, Mode=TwoWay}">
                 <TabControl.DataTemplates>
                     <DataTemplate DataType="{x:Type vm:ImageTabViewModel}">
-                        <TextBlock Text="{Binding Title}"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Title}"/>
+                            <Button Content="X" Command="{Binding CloseTabCommand}" CommandParameter="{Binding}"/>
+                        </StackPanel>
                     </DataTemplate>
                 </TabControl.DataTemplates>
                 <TabControl.ContentTemplate>

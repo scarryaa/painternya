@@ -59,9 +59,12 @@ public class ImageTabViewModel : ViewModelBase
     
     public ICommand ScrolledCommand { get; set; }
     public ICommand ZoomCommand { get; set; }
+    public ICommand CloseTabCommand { get; }
 
-    public ImageTabViewModel()
+    public ImageTabViewModel(ICommand closeTabCommand, LayersPaneViewModel layersPaneVm)
     {
+        LayersPaneVm = layersPaneVm;
+        CloseTabCommand = closeTabCommand;
         UnloadResourcesCommand = ReactiveCommand.Create(UnloadResources);
         LoadResourcesCommand = ReactiveCommand.Create(LoadResources);
         
@@ -108,6 +111,8 @@ public class ImageTabViewModel : ViewModelBase
     
     private void UnloadResources()
     {
+        CanvasViewModel.Dispose();
+        LayersPaneVm = null;
     }
 
     private void LoadResources()

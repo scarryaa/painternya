@@ -19,6 +19,7 @@ public class MessagingService
     public void Unsubscribe(Action<MessageType, object> action)
     {
         _subscribers.Remove(action);
+        Console.WriteLine("Unsubscribed");
     }
 
     public void Publish(MessageType message, object data = null)

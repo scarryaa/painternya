@@ -34,7 +34,7 @@ namespace painternya.ViewModels
         private Vector _offset;
         private static int _globalCurrentToolSize = 4;
         private ITool _currentTool;
-        private Action<MessageType, object>? _messageSubscription;
+        private Action<MessageType, object> _messageSubscription;
         
         private ITool _pencil = new PencilTool(_globalCurrentToolSize);
         private ITool _eraser = new EraserTool(_globalCurrentToolSize);
@@ -166,11 +166,6 @@ namespace painternya.ViewModels
                 .ObserveOn(AvaloniaScheduler.Instance)
                 .Subscribe(_ => InvalidateRequested?.Invoke());
         }
-        
-        ~CanvasViewModel()
-        {
-            Dispose(false);
-        }
 
         public void SelectTool(string tool)
         {
@@ -213,13 +208,10 @@ namespace painternya.ViewModels
         private void Dispose(bool disposing)
         {
             ReleaseUnmanagedResources();
-            if (disposing)
-            {
-                _horizontalOffsetChangedSubject.Dispose();
-                _verticalOffsetChangedSubject.Dispose();
-                
-                MessagingService.Instance.Unsubscribe(_messageSubscription);
-            }
+            MessagingService.Instance.Unsubscribe(_messageSubscription);
+            _horizontalOffsetChangedSubject.Dispose();
+            _verticalOffsetChangedSubject.Dispose();
+            
         }
 
         public void Dispose()
