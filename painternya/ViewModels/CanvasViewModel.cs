@@ -22,6 +22,7 @@ namespace painternya.ViewModels
 {
     public class CanvasViewModel : ViewModelBase, IOffsetObserver, IDisposable
     {
+        private bool isActive = true;
         private Point _lastPoint;
         private int _canvasHeight;
         private int _canvasWidth;
@@ -44,6 +45,11 @@ namespace painternya.ViewModels
         
         public Layer ActiveLayer => _drawingContext.LayerManager.ActiveLayer;
         public DrawingContext DrawingContext => _drawingContext;
+        public bool IsActive
+        {
+            get => isActive;
+            set => this.RaiseAndSetIfChanged(ref isActive, value);
+        }
         
         public int GlobalCurrentToolSize
         {
@@ -140,7 +146,7 @@ namespace painternya.ViewModels
             
             _messageSubscription = (message, data) =>
             {
-                if (message is MessageType.LayerRemoved or MessageType.LayerVisibilityChanged or MessageType.LayerAdded)
+                if ((message is MessageType.LayerRemoved or MessageType.LayerVisibilityChanged or MessageType.LayerAdded) && IsActive)
                 {
                     Console.WriteLine("Invalidate requested " + message + ", " + data);
                     InvalidateRequested?.Invoke();

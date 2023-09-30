@@ -46,9 +46,12 @@
             <TabControl Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" ItemsSource="{Binding ImageTabs}" SelectedItem="{Binding ActiveImageTab, Mode=TwoWay}">
                 <TabControl.DataTemplates>
                     <DataTemplate DataType="{x:Type vm:ImageTabViewModel}">
-                        <TextBlock Text="AAAAA" />
+                        <TextBlock Text="{Binding Title}"/>
                     </DataTemplate>
                 </TabControl.DataTemplates>
+                <TabControl.ContentTemplate>
+                    <DataTemplate DataType="{x:Type vm:ImageTabViewModel}"/>
+                </TabControl.ContentTemplate>
             </TabControl>
             
             <!-- Top bar -->
@@ -87,7 +90,9 @@
 
         <TabControl Grid.Row="3" Grid.Column="1" ItemsSource="{Binding ImageTabs}" SelectedItem="{Binding ActiveImageTab, Mode=TwoWay}">
             <TabControl.DataTemplates>
-                <DataTemplate DataType="{x:Type vm:ImageTabViewModel}"/>
+                <DataTemplate DataType="{x:Type vm:ImageTabViewModel}">
+                    <TextBlock Text="{Binding Title}" Width="0" Height="0"/>
+                </DataTemplate>
             </TabControl.DataTemplates>
             <TabControl.ContentTemplate>
                 <DataTemplate DataType="{x:Type vm:ImageTabViewModel}">

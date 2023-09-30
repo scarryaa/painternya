@@ -1,6 +1,9 @@
+using System;
+using System.Diagnostics;
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Xaml.Interactions.Custom;
 using painternya.Models;
 using painternya.Services;
 using ReactiveUI;
@@ -15,6 +18,8 @@ public class ImageTabViewModel : ViewModelBase
     private double _translateY;
     private Vector _viewport;
     
+    public ICommand UnloadResourcesCommand { get; }
+    public ICommand LoadResourcesCommand { get; }
     public CanvasViewModel CanvasViewModel { get; set; } = new();
     public LayersPaneViewModel LayersPaneVm
     {
@@ -57,12 +62,17 @@ public class ImageTabViewModel : ViewModelBase
 
     public ImageTabViewModel()
     {
+        UnloadResourcesCommand = ReactiveCommand.Create(UnloadResources);
+        LoadResourcesCommand = ReactiveCommand.Create(LoadResources);
+        
         ScrolledCommand = ReactiveCommand.Create<object>(Scrolled);
         ZoomCommand = ReactiveCommand.Create<PointerWheelChangedArgs>(ZoomAtPoint);
     }
     
     public void ZoomAtPoint(PointerWheelChangedArgs args)
     {
+        if (CanvasViewModel.IsActive == false) return;
+        
         double oldZoom = Zoom;
         
         double zoomFactor = args.Delta > 0 ? 1.01 : 0.99;
@@ -77,10 +87,14 @@ public class ImageTabViewModel : ViewModelBase
         CanvasViewModel.Offset = new Vector(TranslateX, TranslateY);
         CanvasViewModel.DrawingContext.Zoom = Zoom;
         CanvasViewModel.DrawingContext.Viewport = Viewport;
+        
+        Console.WriteLine("Scroll event handled for tab: " + Title);
     }
     
     private void Scrolled(object sender)
     {
+        if (CanvasViewModel.IsActive == false) return;
+        
         var scrollViewer = sender as ScrollViewer;
         if (scrollViewer == null) return;
 
@@ -89,5 +103,14 @@ public class ImageTabViewModel : ViewModelBase
         CanvasViewModel.OffsetX = scrollViewer.Offset.X;
         CanvasViewModel.OffsetY = scrollViewer.Offset.Y;
         // CanvasVm.TileManager.UpdateTileVisibilities();
+    }
+    
+    
+    private void UnloadResources()
+    {
+    }
+
+    private void LoadResources()
+    {
     }
 }
