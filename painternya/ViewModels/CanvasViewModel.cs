@@ -9,6 +9,7 @@ using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using Avalonia.ReactiveUI;
 using Microsoft.VisualBasic;
 using painternya.Interfaces;
@@ -22,6 +23,7 @@ namespace painternya.ViewModels
 {
     public class CanvasViewModel : ViewModelBase, IOffsetObserver, IDisposable
     {
+        private RenderTargetBitmap? _thumbnail;
         private readonly ToolManager _toolManager;
         private bool isActive = true;
         private Point _lastPoint;
@@ -42,6 +44,17 @@ namespace painternya.ViewModels
         {
             get => isActive;
             set => this.RaiseAndSetIfChanged(ref isActive, value);
+        }
+        
+        public RenderTargetBitmap? Thumbnail
+        {
+            get => _thumbnail;
+            set
+            {
+                if (value == null) return;
+                _thumbnail = value;
+                this.RaisePropertyChanged();
+            }
         }
         
         public int GlobalCurrentToolSize
@@ -145,9 +158,18 @@ namespace painternya.ViewModels
 
             _drawingContext.DrawingChanged
                 .ObserveOn(AvaloniaScheduler.Instance)
-                .Subscribe(_ => InvalidateRequested?.Invoke());
+                .Subscribe(_ =>
+                {
+                    InvalidateRequested?.Invoke();
+                });
         }
 
+        public void CaptureThumbnail()
+        {
+            Thumbnail = _drawingContext.CaptureThumbnail();
+        }
+
+        
         private void HandlePointerPressed(Point point)
         {
             _toolManager.CurrentTool.OnPointerPressed(_drawingContext.LayerManager, _drawingContext, point, _toolManager.CurrentTool.Size);
@@ -164,6 +186,7 @@ namespace painternya.ViewModels
         {
             _toolManager.CurrentTool.OnPointerReleased(_drawingContext.LayerManager, _drawingContext, point);
             _lastPoint = point;
+            CaptureThumbnail();
         }
 
         private void ReleaseUnmanagedResources() {}

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using Avalonia;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using painternya.Extensions;
 using painternya.Models;
 using DrawingContext = painternya.Models.DrawingContext;
@@ -75,6 +76,24 @@ namespace painternya.Services
                 }
             }
 
+        }
+        
+        public RenderTargetBitmap CaptureThumbnail()
+        {
+            var fullSize = new RenderTargetBitmap(new PixelSize(_tiles.GetLength(0) * TileSize, _tiles.GetLength(1) * TileSize));
+
+            using (var ctx = fullSize.CreateDrawingContext())
+            {
+                for (int x = 0; x < _tiles.GetLength(0); x++)
+                {
+                    for (int y = 0; y < _tiles.GetLength(1); y++)
+                    {
+                        ctx.DrawImage(_tiles[x, y].Bitmap, new Rect(x * TileSize, y * TileSize, TileSize, TileSize));
+                    }
+                }
+            }
+            
+            return fullSize;
         }
         
         public Tile GetTile(int x, int y)

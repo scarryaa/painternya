@@ -16,7 +16,6 @@
     <ItemGroup>
         <AvaloniaResource Include="Assets\**"/>
         <None Remove="Styles\Button.xaml" />
-        <AvaloniaResource Include="Styles\Button.xaml" />
     </ItemGroup>
 
 

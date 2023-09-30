@@ -1,0 +1,40 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- ~1~ Style for the TabControl @1@ -->
+    <!-- <Style Selector="TabControl"> -->
+    <!--     <Setter Property="Background" Value="#FFFFFF"/> -->
+    <!--     <Setter Property="BorderBrush" Value="#DDDDDD"/> -->
+    <!--     <Setter Property="BorderThickness" Value="1"/> -->
+    <!-- </Style> -->
+    <!-- -->
+    <!-- ~1~ Style for the TabItems @1@ -->
+    <!-- <Style Selector="TabItem"> -->
+    <!--     <Setter Property="Padding" Value="10,5"/> -->
+    <!--     <Setter Property="Foreground" Value="#333333"/> -->
+    <!--     <Setter Property="FontSize" Value="14"/> -->
+    <!--     <Setter Property="Template"> -->
+    <!--         <Setter.Value> -->
+    <!--             <ControlTemplate> -->
+    <!--                 <Border Background="{TemplateBinding Background}" -->
+    <!--                         BorderBrush="{TemplateBinding BorderBrush}" -->
+    <!--                         BorderThickness="0,0,0,2"> -->
+    <!--                     <ContentPresenter Content="{TemplateBinding Content}" -->
+    <!--                                       VerticalAlignment="Center" -->
+    <!--                                       HorizontalAlignment="Center"/> -->
+    <!--                 </Border> -->
+    <!--             </ControlTemplate> -->
+    <!--         </Setter.Value> -->
+    <!--     </Setter> -->
+    <!-- </Style> -->
+    <!-- -->
+    <!-- ~1~ Style for TabItem when pointer is over @1@ -->
+    <!-- <Style Selector="TabItem:pointerover"> -->
+    <!--     <Setter Property="Background" Value="#F0F0F0"/> -->
+    <!-- </Style> -->
+    <!-- -->
+    <!-- ~1~ Style for selected TabItem @1@ -->
+    <!-- <Style Selector="TabItem:selected"> -->
+    <!--     <Setter Property="Background" Value="#FFFFFF"/> -->
+    <!--     <Setter Property="BorderBrush" Value="#007ACC"/> -->
+    <!-- </Style> -->
+</Styles>

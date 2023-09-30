@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Media.Imaging;
 using Avalonia.Xaml.Interactions.Custom;
 using painternya.Models;
 using painternya.Services;
@@ -12,12 +13,18 @@ namespace painternya.ViewModels;
 
 public class ImageTabViewModel : ViewModelBase
 {
+    private Bitmap? _thumbnail => CanvasViewModel.Thumbnail;
     private LayersPaneViewModel? _layersPaneVm;
     private double _zoom = 1.0;
     private double _translateX;
     private double _translateY;
     private Vector _viewport;
-    
+
+    public Bitmap? Thumbnail
+    {
+        get => _thumbnail;
+    }
+
     public ICommand UnloadResourcesCommand { get; }
     public ICommand LoadResourcesCommand { get; }
     public CanvasViewModel CanvasViewModel { get; set; } = new();
@@ -103,7 +110,6 @@ public class ImageTabViewModel : ViewModelBase
         
         CanvasViewModel.OffsetX = scrollViewer.Offset.X;
         CanvasViewModel.OffsetY = scrollViewer.Offset.Y;
-        // CanvasVm.TileManager.UpdateTileVisibilities();
     }
     
     

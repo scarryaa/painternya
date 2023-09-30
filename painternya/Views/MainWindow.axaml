@@ -22,7 +22,7 @@
     
     <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" ColumnDefinitions="Auto,*,Auto">
         <!-- Top File Menu -->
-        <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto, Auto, Auto" Grid.Row="0" Grid.ColumnSpan="2">
+        <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto, Auto, Auto" Grid.Row="0" Grid.ColumnSpan="3">
             <Menu>
                 <MenuItem Header="File">
                     <MenuItem Header="New" Command="{Binding NewCommand}"/>
@@ -45,9 +45,9 @@
             <TabControl Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" ItemsSource="{Binding ImageTabs}" SelectedItem="{Binding ActiveImageTab, Mode=TwoWay}">
                 <TabControl.DataTemplates>
                     <DataTemplate DataType="{x:Type vm:ImageTabViewModel}">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Title}"/>
-                            <Button Content="X" Command="{Binding CloseTabCommand}" CommandParameter="{Binding}"/>
+                        <StackPanel Orientation="Vertical">
+                            <Button Classes="FlatButton" Content="X" Command="{Binding CloseTabCommand}" CommandParameter="{Binding}"/>
+                            <Image Width="40" Height="40" Source="{Binding CanvasViewModel.Thumbnail}"/>
                         </StackPanel>
                     </DataTemplate>
                 </TabControl.DataTemplates>
@@ -55,6 +55,7 @@
                     <DataTemplate DataType="{x:Type vm:ImageTabViewModel}"/>
                 </TabControl.ContentTemplate>
             </TabControl>
+
             
             <!-- Top bar -->
             <StackPanel Margin="0, 0, 0, 2" Height="35" Orientation="Horizontal" Grid.Row="1" Grid.Column="0" x:Name="TopToolBar">

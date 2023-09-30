@@ -5,6 +5,7 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Avalonia;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using painternya.Actions;
 using painternya.Extensions;
 using painternya.Interfaces;
@@ -90,6 +91,11 @@ public class DrawingContext
             currentPoint = endingPoint;
         }
         _drawingChangedSubject.OnNext(Unit.Default);
+    }
+    
+    public RenderTargetBitmap CaptureThumbnail()
+    {
+        return CurrentTileManager.CaptureThumbnail();
     }
     
     private bool IsPointInsideCanvas(double x, double y)
