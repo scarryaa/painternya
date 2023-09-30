@@ -75,7 +75,7 @@
             <!-- Top sub bar -->
             <StackPanel Height="35" Orientation="Horizontal" Grid.Row="2" Grid.Column="0">
                 <TextBlock Text="Current Tool:"></TextBlock>
-                <ComboBox Margin="5 0 0 5" Width="100" ItemsSource="{Binding ActiveImageTab.CanvasViewModel.Tools}" SelectedItem="{Binding ActiveImageTab.CanvasViewModel.CurrentTool, Mode=TwoWay, FallbackValue={x:Static tools:PencilTool.Name}}" DisplayMemberBinding="{Binding CurrentToolName}"></ComboBox>
+                <ComboBox Margin="5 0 0 5" Width="100" ItemsSource="{Binding Tools}" SelectedItem="{Binding ToolManager.CurrentTool, Mode=TwoWay, FallbackValue={x:Static tools:PencilTool.Name}}" DisplayMemberBinding="{Binding CurrentToolName}"></ComboBox>
                 <TextBlock Text="Size:"></TextBlock>
                 <TextBox Margin="5 0 0 5" Width="50" Text="{Binding ActiveImageTab.CanvasViewModel.GlobalCurrentToolSize, Mode=TwoWay}"></TextBox>
             </StackPanel>
@@ -92,6 +92,13 @@
         </StackPanel>
 
         <TabControl Grid.Row="3" Grid.Column="1" ItemsSource="{Binding ImageTabs}" SelectedItem="{Binding ActiveImageTab, Mode=TwoWay}">
+            <TabControl.Styles>
+                <Style Selector="TabItem">
+                    <Setter Property="MinHeight" Value="0"/>
+                    <Setter Property="MinWidth" Value="0"/>
+                    <Setter Property="Padding" Value="0"/>
+                </Style>
+            </TabControl.Styles>
             <TabControl.DataTemplates>
                 <DataTemplate DataType="{x:Type vm:ImageTabViewModel}">
                     <TextBlock Text="{Binding Title}" Width="0" Height="0"/>
@@ -103,6 +110,7 @@
                 </DataTemplate>
             </TabControl.ContentTemplate>
         </TabControl>
+
         
         <!-- Bottom bar -->
         <StackPanel Height="35" Orientation="Horizontal" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2">

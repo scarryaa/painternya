@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -8,6 +9,7 @@ using painternya.Controls;
 using painternya.Interfaces;
 using painternya.Models;
 using painternya.Services;
+using painternya.Tools;
 using ReactiveUI;
 
 namespace painternya.ViewModels;
@@ -15,15 +17,22 @@ namespace painternya.ViewModels;
 public class MainWindowViewModel : ViewModelBase
 {
     private readonly IDialogService _dialogService;
+    private readonly ToolManager _toolManager;
     private ImageTabViewModel? _activeImageTab = null;
+    private ITool _pencil;
+    private ITool _eraser;
+    private ITool _brush;
+    public ITool Pencil => _pencil;
+    public ITool Eraser => _eraser;
+    public ITool Brush => _brush;
     
+    public ToolManager ToolManager => _toolManager;
     public ImageTabViewModel ActiveImageTab
     {
         get => _activeImageTab;
         set
         {
             this.RaiseAndSetIfChanged(ref _activeImageTab, value);
-            _activeImageTab?.CanvasViewModel?.SelectTool("Pencil");
             
             // mark canvases as inactive
             foreach (var tab in ImageTabs)
@@ -35,6 +44,8 @@ public class MainWindowViewModel : ViewModelBase
             _activeImageTab.CanvasViewModel.DrawingContext.LayerManager.ActiveLayer = _activeImageTab.CanvasViewModel.DrawingContext.LayerManager.Layers[0];
         }
     }
+    
+    public List<ITool> Tools => new() { Pencil, Eraser, Brush };
     
     public ICommand CloseCommand { get; set; }
     public ICommand TabControlSelectionChangedCommand { get; set; }
@@ -57,8 +68,13 @@ public class MainWindowViewModel : ViewModelBase
     
     public MainWindowViewModel(IDialogService dialogService)
     {
+        _toolManager = new ToolManager();
+        _pencil = new PencilTool(_toolManager.GlobalCurrentToolSize);
+        _eraser = new EraserTool(_toolManager.GlobalCurrentToolSize);
+        _brush = new BrushTool(_toolManager.GlobalCurrentToolSize);
+        
         _dialogService = dialogService;
-        SelectToolCommand = ReactiveCommand.Create<string>(tool => ActiveImageTab.CanvasViewModel?.SelectTool(tool));
+        SelectToolCommand = ReactiveCommand.Create<string>(tool => _toolManager.SelectTool(tool));
         
         NewCommand = ReactiveCommand.Create(New);
         OpenCommand = ReactiveCommand.Create(Open);
@@ -106,7 +122,7 @@ public class MainWindowViewModel : ViewModelBase
         if (result is { Success: true })
         {
             var newLayerManager = new LayerManager(result.Width, result.Height);
-            var newCanvasVm = new CanvasViewModel(newLayerManager, result.Width, result.Height);
+            var newCanvasVm = new CanvasViewModel(_toolManager, newLayerManager, result.Width, result.Height);
             var newTabVm = new ImageTabViewModel(CloseCommand, new LayersPaneViewModel(newLayerManager))
             {
                 Title = "New Tab " + ImageTabs.Count,

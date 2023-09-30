@@ -90,8 +90,6 @@ public class ImageTabViewModel : ViewModelBase
         CanvasViewModel.Offset = new Vector(TranslateX, TranslateY);
         CanvasViewModel.DrawingContext.Zoom = Zoom;
         CanvasViewModel.DrawingContext.Viewport = Viewport;
-        
-        Console.WriteLine("Scroll event handled for tab: " + Title);
     }
     
     private void Scrolled(object sender)

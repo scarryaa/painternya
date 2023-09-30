@@ -22,6 +22,7 @@ namespace painternya.ViewModels
 {
     public class CanvasViewModel : ViewModelBase, IOffsetObserver, IDisposable
     {
+        private readonly ToolManager _toolManager;
         private bool isActive = true;
         private Point _lastPoint;
         private int _canvasHeight;
@@ -33,15 +34,7 @@ namespace painternya.ViewModels
         private double _offsetY;
         private Vector _offset;
         private static int _globalCurrentToolSize = 4;
-        private ITool _currentTool;
         private Action<MessageType, object> _messageSubscription;
-        
-        private ITool _pencil = new PencilTool(_globalCurrentToolSize);
-        private ITool _eraser = new EraserTool(_globalCurrentToolSize);
-        private ITool _brush = new BrushTool(_globalCurrentToolSize);
-        public ITool Pencil => _pencil;
-        public ITool Eraser => _eraser;
-        public ITool Brush => _brush;
         
         public Layer ActiveLayer => _drawingContext.LayerManager.ActiveLayer;
         public DrawingContext DrawingContext => _drawingContext;
@@ -57,19 +50,7 @@ namespace painternya.ViewModels
             set
             {
                 _globalCurrentToolSize = value;
-                _currentTool.Size = value;
-                this.RaisePropertyChanged();
-            }
-        }
-        
-        public List<ITool> Tools => new() { Pencil, Eraser, Brush };
-        public ITool? CurrentTool
-        {
-            get => _currentTool;
-            set
-            {
-                _currentTool = value;
-                if (_currentTool != null) _currentTool.Size = _globalCurrentToolSize;
+                _toolManager.CurrentTool.Size = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -134,10 +115,10 @@ namespace painternya.ViewModels
         
         public CanvasViewModel() {}
         
-        public CanvasViewModel(LayerManager layerManager, int canvasWidth, int canvasHeight)
+        public CanvasViewModel(ToolManager toolManager, LayerManager layerManager, int canvasWidth, int canvasHeight)
         {
+            _toolManager = toolManager;
             _drawingContext = new DrawingContext(layerManager, this, canvasWidth, canvasHeight);
-            CurrentTool = Pencil;
             _horizontalOffsetChangedSubject
                 .Merge(_verticalOffsetChangedSubject)
                 .Throttle(TimeSpan.FromMilliseconds(100))
@@ -167,39 +148,21 @@ namespace painternya.ViewModels
                 .Subscribe(_ => InvalidateRequested?.Invoke());
         }
 
-        public void SelectTool(string tool)
-        {
-            switch (tool)
-            {
-                case "Pencil":
-                    CurrentTool = Pencil;
-                    break;
-                case "Eraser":
-                    CurrentTool = Eraser;
-                    break;
-                case "Brush":
-                    CurrentTool = Brush;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(tool), tool, null);
-            }
-        }
-
         private void HandlePointerPressed(Point point)
         {
-            _currentTool.OnPointerPressed(_drawingContext.LayerManager, _drawingContext, point, CurrentTool.Size);
+            _toolManager.CurrentTool.OnPointerPressed(_drawingContext.LayerManager, _drawingContext, point, _toolManager.CurrentTool.Size);
             _lastPoint = point;
         }
         
         private void HandlePointerMoved(Point point)
         {
-            _currentTool.OnPointerMoved(_drawingContext, point, CurrentTool.Size);
+            _toolManager.CurrentTool.OnPointerMoved(_drawingContext, point, _toolManager.CurrentTool.Size);
             _lastPoint = point;
         }
         
         private void HandlePointerReleased(Point point)
         {
-            _currentTool.OnPointerReleased(_drawingContext.LayerManager, _drawingContext, point);
+            _toolManager.CurrentTool.OnPointerReleased(_drawingContext.LayerManager, _drawingContext, point);
             _lastPoint = point;
         }
 
