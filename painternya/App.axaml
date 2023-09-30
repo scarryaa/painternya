@@ -5,6 +5,10 @@
              RequestedThemeVariant="Default">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
+     <Application.Styles>
+         <StyleInclude Source="/Styles/Button.xaml"/>
+     </Application.Styles>
+             
     <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>

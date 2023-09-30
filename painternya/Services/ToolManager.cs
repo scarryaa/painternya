@@ -15,7 +15,11 @@ public class ToolManager
     public ITool CurrentTool
     {
         get => _currentTool;
-        set => _currentTool = value;
+        set
+        {
+            _currentTool = value;
+            _currentTool.Size = _globalCurrentToolSize;
+        }
     }
 
     public ITool Pencil => _pencil;
@@ -32,6 +36,11 @@ public class ToolManager
         }
     }
 
+    public ToolManager()
+    {
+        _currentTool = _pencil;
+    }
+    
     public void SelectTool(string tool)
     {
         switch (tool)

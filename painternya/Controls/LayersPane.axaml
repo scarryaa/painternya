@@ -5,43 +5,49 @@
              xmlns:viewModels="clr-namespace:painternya.ViewModels"
              xmlns:behaviors="clr-namespace:painternya.Behaviors"
              xmlns:controls="clr-namespace:painternya.Controls"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:avalonia="https://github.com/projektanker/icons.avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="575"
              x:DataType="viewModels:LayersPaneViewModel"
-             x:Class="painternya.Controls.LayersPane">
-    
+             x:Class="painternya.Controls.LayersPane" Height="562">
+
     <DockPanel LastChildFill="True">
-        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
-            <Button Content="Add Layer" Command="{Binding AddLayerCommand}"/>
-            <Button Content="Remove Layer" Command="{Binding RemoveLayerCommand}"/>
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
+            <Button avalonia:Attached.Icon="fa-solid fa-plus" Command="{Binding AddLayerCommand}" />
+            <Button avalonia:Attached.Icon="fa-solid fa-xmark" Command="{Binding RemoveLayerCommand}" />
         </StackPanel>
-        <ScrollViewer DockPanel.Dock="Bottom" VerticalScrollBarVisibility="Auto">
-            <ListBox DragDrop.AllowDrop="True" ItemsSource="{Binding Layers}" SelectedItem="{Binding ActiveLayer, Mode=TwoWay}"
-                     behaviors:SelectionChangedBehavior.Command="{Binding SelectionChangedCommand}">
-                <ListBox.RenderTransform>
-                    <ScaleTransform ScaleY="-1" />
-                </ListBox.RenderTransform>
-                <ListBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Vertical"/>
-                    </ItemsPanelTemplate>
-                </ListBox.ItemsPanel>
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <StackPanel.RenderTransform>
-                                <ScaleTransform ScaleY="-1" />
-                            </StackPanel.RenderTransform>
-                            <CheckBox IsChecked="{Binding Layer.IsVisible, Mode=TwoWay}"
-                                      Command="{Binding ToggleVisibilityCommand}"
-                                      CommandParameter="{Binding}"/>
-                            <!-- Thumbnail -->
-                            <Image Width="40" Height="40"/>
-                            <!-- Layer Name -->
-                            <TextBlock Text="{Binding Layer.Name}" />
-                        </StackPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <DockPanel LastChildFill="True">
+                <ListBox DockPanel.Dock="Bottom"
+                         DragDrop.AllowDrop="True"
+                         ItemsSource="{Binding Layers}"
+                         SelectedItem="{Binding ActiveLayer, Mode=TwoWay}"
+                         behaviors:SelectionChangedBehavior.Command="{Binding SelectionChangedCommand}">
+                    <ListBox.RenderTransform>
+                        <ScaleTransform ScaleY="-1" />
+                    </ListBox.RenderTransform>
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Vertical" />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <StackPanel.RenderTransform>
+                                    <ScaleTransform ScaleY="-1" />
+                                </StackPanel.RenderTransform>
+                                <CheckBox IsChecked="{Binding Layer.IsVisible, Mode=TwoWay}"
+                                          Command="{Binding ToggleVisibilityCommand}"
+                                          CommandParameter="{Binding}" />
+                                <!-- Thumbnail -->
+                                <Image Width="40" Height="40" />
+                                <!-- Layer Name -->
+                                <TextBlock Text="{Binding Layer.Name}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
         </ScrollViewer>
     </DockPanel>
 

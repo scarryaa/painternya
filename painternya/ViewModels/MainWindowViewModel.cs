@@ -17,7 +17,7 @@ namespace painternya.ViewModels;
 public class MainWindowViewModel : ViewModelBase
 {
     private readonly IDialogService _dialogService;
-    private readonly ToolManager _toolManager;
+    private readonly ToolManager _toolManager = new ToolManager();
     private ImageTabViewModel? _activeImageTab = null;
     private ITool _pencil;
     private ITool _eraser;
@@ -25,7 +25,7 @@ public class MainWindowViewModel : ViewModelBase
     public ITool Pencil => _pencil;
     public ITool Eraser => _eraser;
     public ITool Brush => _brush;
-    
+
     public ToolManager ToolManager => _toolManager;
     public ImageTabViewModel ActiveImageTab
     {
@@ -72,6 +72,7 @@ public class MainWindowViewModel : ViewModelBase
         _pencil = new PencilTool(_toolManager.GlobalCurrentToolSize);
         _eraser = new EraserTool(_toolManager.GlobalCurrentToolSize);
         _brush = new BrushTool(_toolManager.GlobalCurrentToolSize);
+        _toolManager.SelectTool("Pencil");
         
         _dialogService = dialogService;
         SelectToolCommand = ReactiveCommand.Create<string>(tool => _toolManager.SelectTool(tool));
