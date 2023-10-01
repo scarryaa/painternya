@@ -14,7 +14,8 @@ using painternya.Services;
 namespace painternya.Models;
 
 public class DrawingContext
-{    
+{
+    private Color _currentColor = Colors.Black;
     private readonly ThumbnailCapturer _thumbnailCapturer;
     private double _currentZoom = 1.0;
     private readonly LayerManager _layerManager;
@@ -27,6 +28,12 @@ public class DrawingContext
     
     private double OffsetX { get; set; }
     private double OffsetY { get; set; }
+    
+    public Color CurrentColor
+    {
+        get => _currentColor;
+        set => _currentColor = value;
+    }
     
     public double Zoom
     {

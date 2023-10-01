@@ -8,7 +8,7 @@
              xmlns:avalonia="https://github.com/projektanker/icons.avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="575"
              x:DataType="viewModels:LayersPaneViewModel"
-             x:Class="painternya.Controls.LayersPane" Height="562">
+             x:Class="painternya.Controls.LayersPane" Height="372">
 
     <DockPanel LastChildFill="True">
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">

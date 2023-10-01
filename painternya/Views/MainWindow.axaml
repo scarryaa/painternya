@@ -92,6 +92,7 @@
         
         <!-- Right bar -->
         <StackPanel Width="140" Orientation="Vertical" Grid.Row="3" Grid.Column="2">
+            <controls:ColorWheel Width="140" Height="200" SelectedColor="{Binding ActiveImageTab.CanvasViewModel.CurrentGlobalColor, Mode=TwoWay}"></controls:ColorWheel>
             <controls:LayersPane DataContext="{Binding ActiveImageTab.LayersPaneVm}"></controls:LayersPane>
         </StackPanel>
 

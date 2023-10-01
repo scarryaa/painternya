@@ -45,7 +45,7 @@ namespace painternya.Tools
         {
             AccumulatedPoints.Add(point);
             
-            drawingContext.DrawLine(LastPoint, point, Colors.Black, Size);
+            drawingContext.DrawLine(LastPoint, point, drawingContext.CurrentColor, Size);
             
             LastPoint = point;
         }
@@ -56,7 +56,7 @@ namespace painternya.Tools
             if (AccumulatedPoints.Count > 1)
             {
                 LastPoint = AccumulatedPoints[0];
-                drawingContext.DrawLine(LastPoint, AccumulatedPoints, Colors.Black, Size);
+                drawingContext.DrawLine(LastPoint, AccumulatedPoints, drawingContext.CurrentColor, Size);
 
                 AccumulatedPoints.Clear();
                 layerManager.ClearPreviewLayer();

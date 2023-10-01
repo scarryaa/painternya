@@ -23,6 +23,7 @@ namespace painternya.ViewModels
 {
     public class CanvasViewModel : ViewModelBase, IOffsetObserver, IDisposable
     {
+        private Color _currentGlobalColor = Colors.Black;
         private readonly ThumbnailCapturer _thumbnailCapturer;
         private RenderTargetBitmap? _thumbnail;
         private readonly ToolManager _toolManager;
@@ -45,6 +46,17 @@ namespace painternya.ViewModels
         {
             get => isActive;
             set => this.RaiseAndSetIfChanged(ref isActive, value);
+        }
+        
+        public Color CurrentGlobalColor
+        {
+            get => _currentGlobalColor;
+            set
+            {
+                _currentGlobalColor = value;
+                _drawingContext.CurrentColor = value;
+                this.RaisePropertyChanged();
+            }
         }
         
         public RenderTargetBitmap? Thumbnail
