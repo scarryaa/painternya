@@ -11,6 +11,7 @@ namespace painternya.ViewModels;
 
 public class LayersPaneViewModel : ViewModelBase
 {
+    private string _activeLayerId;
     private int _layerCount = 1;
     private LayerViewModel? _activeLayer;
     public ObservableCollection<LayerViewModel> Layers { get; set; }
@@ -18,9 +19,22 @@ public class LayersPaneViewModel : ViewModelBase
     public LayerViewModel? ActiveLayer
     {
         get => _activeLayer;
-        set => this.RaiseAndSetIfChanged(ref _activeLayer, value);
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _activeLayer, value);
+            if (value != null)
+            {
+                ActiveLayerId = value.Layer.Id;
+            }
+        }
     }
 
+    public string ActiveLayerId
+    {
+        get => _activeLayerId;
+        set => this.RaiseAndSetIfChanged(ref _activeLayerId, value);
+    }
+    
     public ICommand AddLayerCommand { get; }
     public ICommand RemoveLayerCommand { get; }
     public ICommand SelectionChangedCommand { get; }

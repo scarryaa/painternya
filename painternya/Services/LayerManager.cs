@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
+using System.Linq;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using DynamicData.Binding;
@@ -13,6 +14,7 @@ namespace painternya.Services
 {
     public class LayerManager
     {
+        private Layer? _activeLayer;
         private ObservableCollection<Layer> _layers = new();
         public ObservableCollection<Layer> Layers => _layers;
         public Layer? ActiveLayer { get; set; }
@@ -91,6 +93,11 @@ namespace painternya.Services
             {
                 tile.Bitmap.Clone(_layers[0].TileManager.GetTile(tile.X, tile.Y).Bitmap);
             }
+        }
+        
+        public Layer FindLayerById(string id)
+        {
+            return Layers.FirstOrDefault(layer => layer.Id == id);
         }
     }
 }

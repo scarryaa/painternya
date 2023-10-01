@@ -184,18 +184,21 @@ namespace painternya.ViewModels
         
         private void HandlePointerPressed(Point point)
         {
+            if (!isActive) return;
             _toolManager.CurrentTool.OnPointerPressed(_drawingContext.LayerManager, _drawingContext, point, _toolManager.CurrentTool.Size);
             _lastPoint = point;
         }
         
         private void HandlePointerMoved(Point point)
         {
+            if (!isActive) return;
             _toolManager.CurrentTool.OnPointerMoved(_drawingContext, point, _toolManager.CurrentTool.Size);
             _lastPoint = point;
         }
         
         private void HandlePointerReleased(Point point)
         {
+            if (!isActive) return;
             _toolManager.CurrentTool.OnPointerReleased(_drawingContext.LayerManager, _drawingContext, point);
             _lastPoint = point;
             

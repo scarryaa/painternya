@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia;
@@ -17,7 +18,7 @@ namespace painternya.ViewModels;
 public class MainWindowViewModel : ViewModelBase
 {
     private readonly IDialogService _dialogService;
-    private readonly ToolManager _toolManager = new ToolManager();
+    private readonly ToolManager _toolManager;
     private ImageTabViewModel? _activeImageTab = null;
     private ITool _pencil;
     private ITool _eraser;
@@ -34,14 +35,23 @@ public class MainWindowViewModel : ViewModelBase
         {
             this.RaiseAndSetIfChanged(ref _activeImageTab, value);
             
+            Console.WriteLine("Active tab changed, '{0}' is now active", _activeImageTab.Title);
+            
             // mark canvases as inactive
             foreach (var tab in ImageTabs)
             {
+                if (tab.CanvasViewModel.IsActive) tab.LastActiveLayerId = tab.CanvasViewModel.DrawingContext.LayerManager.ActiveLayer.Id;
                 tab.CanvasViewModel.IsActive = false;
             }
             _activeImageTab.CanvasViewModel.IsActive = true;
             _activeImageTab?.LoadResourcesCommand.Execute(null);
-            _activeImageTab.CanvasViewModel.DrawingContext.LayerManager.ActiveLayer = _activeImageTab.CanvasViewModel.DrawingContext.LayerManager.Layers[0];
+            
+            Layer lastActiveLayer = _activeImageTab.CanvasViewModel.DrawingContext.LayerManager.FindLayerById(_activeImageTab.LastActiveLayerId);
+            if (lastActiveLayer != null)
+            {
+                _activeImageTab.LayersPaneVm.ActiveLayer = _activeImageTab.LayersPaneVm.Layers.FirstOrDefault(layer => layer.Layer.Id == lastActiveLayer.Id);
+                _activeImageTab.CanvasViewModel.DrawingContext.LayerManager.SetActiveLayer(lastActiveLayer);
+            }
         }
     }
     
@@ -131,16 +141,13 @@ public class MainWindowViewModel : ViewModelBase
             };
             
             ImageTabs.Add(newTabVm);
-            ActiveImageTab = newTabVm;
-            
-            // mark canvases as inactive
             foreach (var tab in ImageTabs)
             {
+                if (tab.CanvasViewModel.IsActive) tab.LastActiveLayerId = tab.CanvasViewModel.DrawingContext.LayerManager.ActiveLayer.Id;
                 tab.CanvasViewModel.IsActive = false;
             }
             
-            // mark new canvas as active
-            newCanvasVm.IsActive = true;
+            ActiveImageTab = newTabVm;
         }
     }
     

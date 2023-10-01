@@ -13,6 +13,7 @@ namespace painternya.ViewModels;
 
 public class ImageTabViewModel : ViewModelBase
 {
+    public string LastActiveLayerId { get; set; }
     private Bitmap? _thumbnail => CanvasViewModel.Thumbnail;
     private LayersPaneViewModel? _layersPaneVm;
     private double _zoom = 1.0;
@@ -27,7 +28,7 @@ public class ImageTabViewModel : ViewModelBase
 
     public ICommand UnloadResourcesCommand { get; }
     public ICommand LoadResourcesCommand { get; }
-    public CanvasViewModel CanvasViewModel { get; set; } = new();
+    public CanvasViewModel CanvasViewModel { get; set; }
     public LayersPaneViewModel LayersPaneVm
     {
         get => _layersPaneVm ??= new LayersPaneViewModel(CanvasViewModel.DrawingContext.LayerManager);
