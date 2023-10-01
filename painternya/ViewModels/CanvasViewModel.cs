@@ -23,6 +23,7 @@ namespace painternya.ViewModels
 {
     public class CanvasViewModel : ViewModelBase, IOffsetObserver, IDisposable
     {
+        private readonly ThumbnailCapturer _thumbnailCapturer;
         private RenderTargetBitmap? _thumbnail;
         private readonly ToolManager _toolManager;
         private bool isActive = true;
@@ -168,7 +169,6 @@ namespace painternya.ViewModels
         {
             Thumbnail = _drawingContext.CaptureThumbnail();
         }
-
         
         private void HandlePointerPressed(Point point)
         {
@@ -186,6 +186,7 @@ namespace painternya.ViewModels
         {
             _toolManager.CurrentTool.OnPointerReleased(_drawingContext.LayerManager, _drawingContext, point);
             _lastPoint = point;
+            
             CaptureThumbnail();
         }
 

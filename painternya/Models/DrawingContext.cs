@@ -15,6 +15,7 @@ namespace painternya.Models;
 
 public class DrawingContext
 {    
+    private readonly ThumbnailCapturer _thumbnailCapturer;
     private double _currentZoom = 1.0;
     private readonly LayerManager _layerManager;
     private TileManager? CurrentTileManager => _layerManager.ActiveLayer?.TileManager ?? null;
@@ -57,6 +58,7 @@ public class DrawingContext
     public DrawingContext(LayerManager layerManager, IOffsetObserver offsetObserver, int totalWidth, int totalHeight)
     {
         _layerManager = layerManager;
+        _thumbnailCapturer = new ThumbnailCapturer(CurrentTileManager, totalWidth, totalHeight);
         
         _observer = offsetObserver;
         _observer.OffsetChanged.Subscribe(_ =>
@@ -95,7 +97,7 @@ public class DrawingContext
     
     public RenderTargetBitmap CaptureThumbnail()
     {
-        return CurrentTileManager.CaptureThumbnail();
+        return _thumbnailCapturer.CaptureThumbnail();
     }
     
     private bool IsPointInsideCanvas(double x, double y)
