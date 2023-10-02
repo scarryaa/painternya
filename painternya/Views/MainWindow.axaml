@@ -14,7 +14,8 @@
         Width="800" Height="700"
         Title="painternya"
         WindowStartupLocation="CenterScreen"
-        TransparencyLevelHint="AcrylicBlur">
+        TransparencyLevelHint="AcrylicBlur"
+        Background="#202020">
 
     <Design.DataContext>
         <viewModels:MainWindowViewModel/>
@@ -22,7 +23,7 @@
     
     <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" ColumnDefinitions="Auto,*,Auto">
         <!-- Top File Menu -->
-        <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto, Auto, Auto" Grid.Row="0" Grid.ColumnSpan="3">
+        <Grid  ColumnDefinitions="Auto,*" RowDefinitions="Auto, Auto, Auto" Grid.Row="0" Grid.ColumnSpan="3">
             <Menu>
                 <MenuItem Header="File">
                     <MenuItem Header="New" Command="{Binding NewCommand}"/>
@@ -91,7 +92,7 @@
         </StackPanel>
         
         <!-- Right bar -->
-        <StackPanel Width="180" Orientation="Vertical" Grid.Row="3" Grid.Column="2">
+        <StackPanel Background="#404040" Width="180" Orientation="Vertical" Grid.Row="3" Grid.Column="2">
             <controls:ColorWheel Width="120" Height="200" PrimaryColor="{Binding ActiveImageTab.CanvasViewModel.CurrentGlobalColor, Mode=TwoWay}"></controls:ColorWheel>
             <controls:LayersPane DataContext="{Binding ActiveImageTab.LayersPaneVm}"></controls:LayersPane>
         </StackPanel>

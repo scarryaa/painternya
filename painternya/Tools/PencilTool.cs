@@ -1,11 +1,7 @@
-using System;
 using Avalonia;
-using Avalonia.Media;
-using Avalonia.Media.Imaging;
 using painternya.Interfaces;
 using DrawingContext = painternya.Models.DrawingContext;
 using System.Collections.Generic;
-using painternya.Actions;
 using painternya.Models;
 using painternya.Services;
 

@@ -77,7 +77,8 @@ namespace painternya.Controls
 
         private void DrawCheckerboardBackground(DrawingContext context)
         {
-            int squareSize = 16;
+            // Determine square size from canvas size
+            int squareSize = (int)Width / 10;
             int horizontalSquares = (int)Math.Ceiling(Width / (double)squareSize);
             int verticalSquares = (int)Math.Ceiling(Height / (double)squareSize);
             var rect = new Rect(0, 0, squareSize, squareSize);
@@ -101,16 +102,28 @@ namespace painternya.Controls
         private void RenderLayer(Layer layer, DrawingContext context)
         {
             if (!layer.IsVisible) return;
-            
-            foreach (var tile in layer.TileManager.GetAllTiles())
+
+            var offscreenBitmap = ViewModel.DrawingContext.OffscreenBitmap;
+            if (offscreenBitmap != null)
             {
-                var sourceWidth = tile.Width;
-                var sourceHeight = tile.Height;
+                Console.WriteLine("Rendering offscreen bitmap");
+                var sourceRect = new Rect(0, 0, offscreenBitmap.PixelSize.Width, offscreenBitmap.PixelSize.Height);
+                var destRect = new Rect(0, 0, CanvasWidth, CanvasHeight);  // Adjust these values as necessary
+                context.DrawImage(offscreenBitmap, sourceRect, destRect);
+            }
+            else
+            {
+                foreach (var tile in layer.TileManager.GetAllTiles())
+                {
+                    if (!tile.Dirty || !tile.IsVisible) continue;
+                    var sourceWidth = tile.Width;
+                    var sourceHeight = tile.Height;
 
-                var destRect = new Rect(tile.X * TileManager.TileSize, tile.Y * TileManager.TileSize, sourceWidth, sourceHeight);
-                var sourceRect = new Rect(0, 0, sourceWidth, sourceHeight);
+                    var destRect = new Rect(tile.X * TileManager.TileSize, tile.Y * TileManager.TileSize, sourceWidth, sourceHeight);
+                    var sourceRect = new Rect(0, 0, sourceWidth, sourceHeight);
 
-                context.DrawImage(tile.Bitmap, sourceRect, destRect);
+                    context.DrawImage(tile.Bitmap, sourceRect, destRect);
+                }
             }
         }
     }

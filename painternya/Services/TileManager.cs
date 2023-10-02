@@ -71,9 +71,9 @@ namespace painternya.Services
                     _tiles[x, y] = new Tile(tileWidth, tileHeight);
                     _tiles[x, y].X = x;
                     _tiles[x, y].Y = y;
+                    _tiles[x, y].Dirty = true;
                 }
             }
-
         }
         
         public RenderTargetBitmap CaptureThumbnail()

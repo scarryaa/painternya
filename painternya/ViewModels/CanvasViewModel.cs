@@ -38,6 +38,13 @@ namespace painternya.ViewModels
         private Vector _offset;
         private static int _globalCurrentToolSize = 4;
         private Action<MessageType, object> _messageSubscription;
+        private double _zoom = 1.0;
+        
+        public double Zoom
+        {
+            get => _zoom;
+            set => this.RaiseAndSetIfChanged(ref _zoom, value);
+        }
         
         public Layer ActiveLayer => _drawingContext.LayerManager.ActiveLayer;
         public DrawingContext DrawingContext => _drawingContext;
@@ -57,6 +64,8 @@ namespace painternya.ViewModels
                 this.RaisePropertyChanged();
             }
         }
+        
+        public RenderTargetBitmap OffscreenBitmap => _drawingContext.OffscreenBitmap;
         
         public RenderTargetBitmap? Thumbnail
         {

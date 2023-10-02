@@ -25,7 +25,6 @@ public class ImageTabViewModel : ViewModelBase
     {
         get => _thumbnail;
     }
-
     public ICommand UnloadResourcesCommand { get; }
     public ICommand LoadResourcesCommand { get; }
     public CanvasViewModel CanvasViewModel { get; set; }
@@ -50,7 +49,11 @@ public class ImageTabViewModel : ViewModelBase
     public double Zoom
     {
         get => _zoom;
-        set => this.RaiseAndSetIfChanged(ref _zoom, value);
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _zoom, value);
+            CanvasViewModel.Zoom = value;
+        }
     }
     
     public double TranslateX

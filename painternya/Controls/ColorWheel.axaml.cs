@@ -36,6 +36,9 @@ namespace painternya.Controls
         {
             _svg = new SKSvg();
             _svg.Load("/home/scarlet/RiderProjects/painternya/painternya/Assets/swap_arrows.svg");
+            
+            PrimaryColor = Colors.Black;
+            SecondaryColor = Colors.White;
 
             this.GetObservable(PrimaryColorProperty).Subscribe(_ => InvalidateVisual());
             this.GetObservable(SecondaryColorProperty).Subscribe(_ => InvalidateVisual());
@@ -105,6 +108,35 @@ namespace painternya.Controls
 
             context.DrawRectangle(Brushes.Transparent, new Pen(Brushes.Black, 2),
                 new Rect(cursorX - 5, cursorY - 5, 10, 10));
+            
+            DrawColorPalette(context, center.X - 100, center.Y + radius + 5);  // Position the palette 20 pixels below the color wheel
+        }
+        
+        private void DrawColorPalette(DrawingContext context, double startX, double startY)
+        {
+            // Define the colors in your palette
+            var paletteColors = new[]
+            {
+                Colors.Black, Colors.White, Colors.Red, Colors.Orange, Colors.Yellow, Colors.Green, Colors.Blue, Colors.Indigo, Colors.Violet
+            };
+
+            int colorsPerRow = 9;  // Number of colors to display per row
+            double rectSize = 15;  // Size of each color rectangle
+            double spacing = 0;    // Spacing between color rectangles
+
+            for (int i = 0; i < paletteColors.Length; i++)
+            {
+                int row = i / colorsPerRow;
+                int col = i % colorsPerRow;
+
+                double x = startX + col * (rectSize + spacing);
+                double y = startY + row * (rectSize + spacing);
+
+                var rect = new Rect(x, y, rectSize, rectSize);
+                var brush = new SolidColorBrush(paletteColors[i]);
+
+                context.FillRectangle(brush, rect);
+            }
         }
 
         private void DrawColorBox(DrawingContext context, Color color, Rect rect)
