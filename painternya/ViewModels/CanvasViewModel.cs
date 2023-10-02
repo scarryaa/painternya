@@ -28,7 +28,6 @@ namespace painternya.ViewModels
         private RenderTargetBitmap? _thumbnail;
         private readonly ToolManager _toolManager;
         private bool isActive = true;
-        private Point _lastPoint;
         private int _canvasHeight;
         private int _canvasWidth;
         private readonly Subject<Unit> _horizontalOffsetChangedSubject = new();
@@ -186,21 +185,18 @@ namespace painternya.ViewModels
         {
             if (!isActive) return;
             _toolManager.CurrentTool.OnPointerPressed(_drawingContext.LayerManager, _drawingContext, point, _toolManager.CurrentTool.Size);
-            _lastPoint = point;
         }
         
         private void HandlePointerMoved(Point point)
         {
             if (!isActive) return;
             _toolManager.CurrentTool.OnPointerMoved(_drawingContext, point, _toolManager.CurrentTool.Size);
-            _lastPoint = point;
         }
         
         private void HandlePointerReleased(Point point)
         {
             if (!isActive) return;
             _toolManager.CurrentTool.OnPointerReleased(_drawingContext.LayerManager, _drawingContext, point);
-            _lastPoint = point;
             
             CaptureThumbnail();
         }

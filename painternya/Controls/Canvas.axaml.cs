@@ -13,6 +13,8 @@ namespace painternya.Controls
     {
         private int _canvasWidth;
         private int _canvasHeight;
+        private SolidColorBrush _darkSquareBrush = new SolidColorBrush(Color.FromRgb(204, 204, 204));
+        private SolidColorBrush _lightSquareBrush = new SolidColorBrush(Color.FromRgb(255, 255, 255));
         
         public CanvasViewModel ViewModel { get; set; }
         
@@ -76,23 +78,20 @@ namespace painternya.Controls
         private void DrawCheckerboardBackground(DrawingContext context)
         {
             int squareSize = 16;
-            Color darkSquareColor = Color.FromRgb(204, 204, 204);
-            Color lightSquareColor = Color.FromRgb(255, 255, 255);
-
             int horizontalSquares = (int)Math.Ceiling(Width / (double)squareSize);
             int verticalSquares = (int)Math.Ceiling(Height / (double)squareSize);
+            var rect = new Rect(0, 0, squareSize, squareSize);
 
             for (int i = 0; i < horizontalSquares; i++)
             {
                 for (int j = 0; j < verticalSquares; j++)
                 {
-                    var currentColor = ((i + j) % 2 == 0) ? lightSquareColor : darkSquareColor;
-                    var rect = new Rect(i * squareSize, j * squareSize, squareSize, squareSize);
-                    context.FillRectangle(new SolidColorBrush(currentColor), rect);
+                    var currentBrush = ((i + j) % 2 == 0) ? _lightSquareBrush : _darkSquareBrush;
+                    rect = rect.WithX(i * squareSize).WithY(j * squareSize);
+                    context.FillRectangle(currentBrush, rect);
                 }
             }
         }
-
         
         public void InvalidateCanvas()
         {

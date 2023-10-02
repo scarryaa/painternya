@@ -74,7 +74,7 @@
             
             <!-- Top sub bar -->
             <StackPanel Height="35" Orientation="Horizontal" Grid.Row="2" Grid.Column="0">
-                <TextBlock Text="Current Tool:"></TextBlock>
+                <TextBlock Text="Tool:" VerticalAlignment="Center"/>
                 <ComboBox Margin="5 0 0 5" Width="100" ItemsSource="{Binding Tools}" SelectedItem="{Binding ToolManager.CurrentTool, Mode=TwoWay, FallbackValue={x:Static tools:PencilTool.Name}}" DisplayMemberBinding="{Binding CurrentToolName}"></ComboBox>
                 <TextBlock Text="Size:"></TextBlock>
                 <TextBox Margin="5 0 0 5" Width="50" Text="{Binding ActiveImageTab.CanvasViewModel.GlobalCurrentToolSize, Mode=TwoWay}"></TextBox>
@@ -91,8 +91,8 @@
         </StackPanel>
         
         <!-- Right bar -->
-        <StackPanel Width="140" Orientation="Vertical" Grid.Row="3" Grid.Column="2">
-            <controls:ColorWheel Width="140" Height="200" SelectedColor="{Binding ActiveImageTab.CanvasViewModel.CurrentGlobalColor, Mode=OneWayToSource}"></controls:ColorWheel>
+        <StackPanel Width="180" Orientation="Vertical" Grid.Row="3" Grid.Column="2">
+            <controls:ColorWheel Width="120" Height="200" PrimaryColor="{Binding ActiveImageTab.CanvasViewModel.CurrentGlobalColor, Mode=TwoWay}"></controls:ColorWheel>
             <controls:LayersPane DataContext="{Binding ActiveImageTab.LayersPaneVm}"></controls:LayersPane>
         </StackPanel>
 

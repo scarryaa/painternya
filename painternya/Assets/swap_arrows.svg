@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+    <!-- Arrow pointing right -->
+    <path d="M10,20 L30,20 L25,15 L30,20 L25,25" stroke="White" stroke-width="2" fill="none" />
+    <!-- Arrow pointing left -->
+    <path d="M30,20 L10,20 L15,15 L10,20 L15,25" stroke="White" stroke-width="2" fill="none" />
+</svg>

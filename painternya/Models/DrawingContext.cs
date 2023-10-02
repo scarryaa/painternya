@@ -121,10 +121,10 @@ public class DrawingContext
 
         int dx = Math.Abs(x2 - x1);
         int dy = Math.Abs(y2 - y1);
-
+    
         int sx = x1 < x2 ? 1 : -1;
         int sy = y1 < y2 ? 1 : -1;
-
+    
         int err = dx - dy;
 
         while (true)

@@ -1,12 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using painternya.Extensions;
 using painternya.Models;
-using DrawingContext = painternya.Models.DrawingContext;
 
 namespace painternya.Services
 {
@@ -16,7 +14,7 @@ namespace painternya.Services
         private readonly OrderedDictionary _loadedTiles = new();
         private readonly int _maxLoadedTiles;
         
-        public static int TileSize = 128;
+        public static int TileSize = 1280;
         public TileManager(int totalWidth, int totalHeight, int maxLoadedTiles = 100)
         {
             _maxLoadedTiles = maxLoadedTiles;

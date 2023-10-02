@@ -31,7 +31,7 @@ class Program
         serviceCollection.AddSingleton<IDialogService, DialogService>();
         
         ServiceProvider = serviceCollection.BuildServiceProvider();
-        
+
         return AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .WithInterFont()

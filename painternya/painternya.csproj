@@ -24,6 +24,7 @@
     <ItemGroup>
         <PackageReference Include="Avalonia" Version="11.0.2"/>
         <PackageReference Include="Avalonia.Desktop" Version="11.0.2"/>
+        <PackageReference Include="Avalonia.Svg.Skia" Version="11.0.0.2" />
         <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.2"/>
         <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.2"/>
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
@@ -32,6 +33,7 @@
         <PackageReference Include="Avalonia.Xaml.Behaviors" Version="11.0.2" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0-rc.1.23419.4" />
         <PackageReference Include="Projektanker.Icons.Avalonia.FontAwesome" Version="8.2.0" />
+        <PackageReference Include="Svg.Skia" Version="1.0.0.2" />
     </ItemGroup>
 
 
@@ -47,6 +49,10 @@
 
     <ItemGroup>
       <Compile Remove="bin\**" />
+      <Compile Update="Controls\Canvas.axaml.cs">
+        <DependentUpon>Canvas.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 
 

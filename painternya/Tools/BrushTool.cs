@@ -28,7 +28,6 @@ public class BrushTool : ITool
     public void OnPointerPressed(LayerManager layerManager, DrawingContext drawingContext, Point point, int brushSize)
     {
         ActiveLayer = layerManager.ActiveLayer;
-        Console.WriteLine(ActiveLayer.Name);
         if (ActiveLayer == null)
             return;
         
