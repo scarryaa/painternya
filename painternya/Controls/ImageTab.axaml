@@ -20,7 +20,7 @@
                 </TransformGroup>
             </LayoutTransformControl.LayoutTransform>
 
-            <Border Background="Transparent" behaviors:PointerWheelChangedBehavior.Command="{Binding ZoomCommand}">
+            <Border behaviors:PointerWheelChangedBehavior.Command="{Binding ZoomCommand}">
                 <controls:Canvas DataContext="{Binding CanvasViewModel}"></controls:Canvas>
             </Border>
         </LayoutTransformControl>

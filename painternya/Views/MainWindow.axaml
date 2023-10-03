@@ -44,11 +44,11 @@
                     </MenuItem>
                 </Menu>
             
-                <TabControl Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" ItemsSource="{Binding ImageTabs}" SelectedItem="{Binding ActiveImageTab, Mode=TwoWay}">
+                <TabControl Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" ItemsSource="{Binding ImageTabs}" SelectedItem="{Binding ActiveImageTab, Mode=TwoWay}">
                     <TabControl.DataTemplates>
                         <DataTemplate DataType="{x:Type vm:ImageTabViewModel}">
                             <StackPanel Orientation="Vertical">
-                                <Button Classes="FlatButton" Content="X" Command="{Binding CloseTabCommand}" CommandParameter="{Binding}"/>
+                                <Button Classes="FlatButton" Width="20" Height="20" Content="X" Command="{Binding CloseTabCommand}" CommandParameter="{Binding}"/>
                                 <Image Width="40" Height="40" Source="{Binding CanvasViewModel.Thumbnail}"/>
                             </StackPanel>
                         </DataTemplate>
@@ -98,7 +98,7 @@
         <!-- Right bar -->
         <Border BorderThickness="1,0,0,0" BorderBrush="Black" Grid.Row="3" Grid.Column="2">
             <StackPanel Background="#202020" Width="180" Orientation="Vertical">
-                <controls:ColorWheel Width="120" Height="200" PrimaryColor="{Binding ActiveImageTab.CanvasViewModel.CurrentGlobalColor, Mode=TwoWay}"></controls:ColorWheel>
+                <controls:ColorWheel Width="180" Height="225" PrimaryColor="{Binding ActiveImageTab.CanvasViewModel.CurrentGlobalColor, Mode=TwoWay}"></controls:ColorWheel>
                 <controls:LayersPane DataContext="{Binding ActiveImageTab.LayersPaneVm}"></controls:LayersPane>
             </StackPanel>
         </Border>

@@ -13,4 +13,5 @@
              Width="{Binding CanvasWidth}" Height="{Binding CanvasHeight}"
              Background="Transparent"
              RenderOptions.EdgeMode="Antialias" RenderOptions.BitmapInterpolationMode="None" RenderOptions.TextRenderingMode="Alias">
+    <Border BorderBrush="#606060" BorderThickness="1"/>
 </UserControl>

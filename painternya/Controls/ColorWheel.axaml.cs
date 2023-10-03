@@ -9,10 +9,12 @@ using Svg.Skia;
 
 namespace painternya.Controls
 {
-    public partial class ColorWheel : Control
+    public partial class ColorWheel : UserControl
     {
         private SKSvg _svg;
         private Rect _arrowIconBounds;
+        private Rect[] palletteRects;
+        private Color[] paletteColors;
 
         public static readonly StyledProperty<Color> PrimaryColorProperty =
             AvaloniaProperty.Register<ColorWheel, Color>(nameof(PrimaryColor));
@@ -35,7 +37,7 @@ namespace painternya.Controls
         public ColorWheel()
         {
             _svg = new SKSvg();
-            _svg.Load("/home/scarlet/RiderProjects/painternya/painternya/Assets/swap_arrows.svg");
+            _svg.Load("../../../Assets/swap_arrows.svg");
             
             PrimaryColor = Colors.Black;
             SecondaryColor = Colors.White;
@@ -75,12 +77,9 @@ namespace painternya.Controls
             DrawColorBox(context, Colors.Black, new Rect(center.X - 102, center.Y - 70, 24, 24));
             DrawColorBox(context, Colors.White, new Rect(center.X - 101, center.Y - 69, 22, 22));
             DrawColorBox(context, PrimaryColor, new Rect(center.X - 100, center.Y - 68, 20, 20));
-
-            // Create an SKBitmap to hold the rendered SVG
+            
             var skBitmap = new SKBitmap(35, 25);
-            // Create an SKCanvas to draw onto the SKBitmap
             using var skCanvas = new SKCanvas(skBitmap);
-            // Draw the SVG picture onto the SKCanvas
             skCanvas.DrawPicture(_svg.Picture);
 
             // Convert the SKBitmap to an Avalonia bitmap
@@ -109,20 +108,22 @@ namespace painternya.Controls
             context.DrawRectangle(Brushes.Transparent, new Pen(Brushes.Black, 2),
                 new Rect(cursorX - 5, cursorY - 5, 10, 10));
             
-            DrawColorPalette(context, center.X - 100, center.Y + radius + 5);  // Position the palette 20 pixels below the color wheel
+            DrawColorPalette(context, center.X - 100, center.Y + radius + 5); 
         }
         
         private void DrawColorPalette(DrawingContext context, double startX, double startY)
         {
-            // Define the colors in your palette
-            var paletteColors = new[]
+            paletteColors = new[]
             {
-                Colors.Black, Colors.White, Colors.Red, Colors.Orange, Colors.Yellow, Colors.Green, Colors.Blue, Colors.Indigo, Colors.Violet
+                Colors.Black, Colors.Gray, Colors.Red, Colors.Orange, Colors.Yellow, Colors.Green, Colors.SkyBlue, Colors.Blue, Colors.DarkViolet, Colors.Pink, Colors.Violet,
+                Colors.White, Colors.DarkGray, Colors.DarkRed, Colors.DarkOrange, Colors.DarkGoldenrod, Colors.DarkGreen, Colors.RoyalBlue, Colors.DarkBlue, Colors.Indigo, Colors.HotPink, Colors.BlueViolet
             };
+            
+            palletteRects = new Rect[paletteColors.Length];
 
-            int colorsPerRow = 9;  // Number of colors to display per row
-            double rectSize = 15;  // Size of each color rectangle
-            double spacing = 0;    // Spacing between color rectangles
+            int colorsPerRow = 11;
+            double rectSize = 15;
+            double spacing = 0;
 
             for (int i = 0; i < paletteColors.Length; i++)
             {
@@ -133,6 +134,7 @@ namespace painternya.Controls
                 double y = startY + row * (rectSize + spacing);
 
                 var rect = new Rect(x, y, rectSize, rectSize);
+                palletteRects[i] = rect;
                 var brush = new SolidColorBrush(paletteColors[i]);
 
                 context.FillRectangle(brush, rect);
@@ -217,10 +219,26 @@ namespace painternya.Controls
             var position = e.GetPosition(this);
             if (_arrowIconBounds.Contains(position))
             {
-                // The SVG icon was clicked, swap the primary and secondary colors
-                var tempColor = PrimaryColor;
-                PrimaryColor = SecondaryColor;
-                SecondaryColor = tempColor;
+                // If the SVG icon was clicked, swap the primary and secondary colors
+                (PrimaryColor, SecondaryColor) = (SecondaryColor, PrimaryColor);
+            }
+            
+            if (palletteRects != null)
+            {
+                for (int i = 0; i < palletteRects.Length; i++)
+                {
+                    if (palletteRects[i].Contains(position))
+                    {
+                        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+                        {
+                            PrimaryColor = paletteColors[i];
+                        }
+                        else if (e.GetCurrentPoint(this).Properties.IsRightButtonPressed)
+                        {
+                            SecondaryColor = paletteColors[i];
+                        }
+                    }
+                }
             }
         }
 
@@ -254,7 +272,7 @@ namespace painternya.Controls
 
             var distanceSquared = dx * dx + dy * dy;
             var radiusSquared = Math.Pow(Math.Min(Bounds.Width, Bounds.Height) / 2, 2);
-            if (distanceSquared > radiusSquared)
+            if (distanceSquared > radiusSquared)    
                 return;
 
             var angle = Math.Atan2(dy, dx);
