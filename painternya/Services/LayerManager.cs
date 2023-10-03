@@ -91,7 +91,7 @@ namespace painternya.Services
         {
             foreach (var tile in PreviewLayer.TileManager.GetAllTiles())
             {
-                tile.Bitmap.Clone(_layers[0].TileManager.GetTile(tile.X, tile.Y).Bitmap);
+                _layers[0].TileManager.GetTile(tile.Value.X, tile.Value.Y).Bitmap.Clone(tile.Value.Bitmap);
             }
         }
         

@@ -5,6 +5,7 @@ using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
@@ -23,6 +24,7 @@ namespace painternya.ViewModels
 {
     public class CanvasViewModel : ViewModelBase, IOffsetObserver, IDisposable
     {
+        public Bitmap CurrentBitmap { get; set; }
         private Color _currentGlobalColor = Colors.Black;
         private readonly ThumbnailCapturer _thumbnailCapturer;
         private RenderTargetBitmap? _thumbnail;
@@ -207,7 +209,19 @@ namespace painternya.ViewModels
             if (!isActive) return;
             _toolManager.CurrentTool.OnPointerReleased(_drawingContext.LayerManager, _drawingContext, point);
             
-            CaptureThumbnail();
+            Task.Run(() =>
+            {
+                _drawingContext.CaptureThumbnail();
+            });
+        }
+        
+        public void SetBitmap(WriteableBitmap bitmap)
+        {
+            // Implement logic to update canvas drawing based on new bitmap.
+            // This could involve rendering the bitmap to a layer, updating display, etc.
+            CurrentBitmap = bitmap;
+            
+            _drawingContext.LayerManager.ActiveLayer.TileManager.SetBitmapToTile(0, 0, bitmap);
         }
 
         private void ReleaseUnmanagedResources() {}

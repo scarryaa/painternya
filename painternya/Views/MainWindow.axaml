@@ -23,103 +23,97 @@
     
     <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" ColumnDefinitions="Auto,*,Auto">
         <!-- Top File Menu -->
-        <Grid  ColumnDefinitions="Auto,*" RowDefinitions="Auto, Auto, Auto" Grid.Row="0" Grid.ColumnSpan="3">
-            <Menu>
-                <MenuItem Header="File">
-                    <MenuItem Header="New" Command="{Binding NewCommand}"/>
-                    <MenuItem Header="Open" Command="{Binding OpenCommand}"/>
-                    <MenuItem Header="Save" Command="{Binding SaveCommand}"/>
-                    <MenuItem Header="Save As" Command="{Binding SaveAsCommand}"/>
-                    <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>
-                </MenuItem>
-                <MenuItem Header="Edit">
-                    <MenuItem Header="Undo" Command="{Binding UndoCommand}"/>
-                    <MenuItem Header="Redo" Command="{Binding RedoCommand}"/>
-                    <MenuItem Header="Cut" Command="{Binding CutCommand}"/>
-                    <MenuItem Header="Copy" Command="{Binding CopyCommand}"/>
-                    <MenuItem Header="Paste" Command="{Binding PasteCommand}"/>
-                    <MenuItem Header="Delete" Command="{Binding DeleteCommand}"/>
-                    <MenuItem Header="Select All" Command="{Binding SelectAllCommand}"/>
-                </MenuItem>
-            </Menu>
-        
-            <TabControl Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" ItemsSource="{Binding ImageTabs}" SelectedItem="{Binding ActiveImageTab, Mode=TwoWay}">
-                <TabControl.DataTemplates>
-                    <DataTemplate DataType="{x:Type vm:ImageTabViewModel}">
-                        <StackPanel Orientation="Vertical">
-                            <Button Classes="FlatButton" Content="X" Command="{Binding CloseTabCommand}" CommandParameter="{Binding}"/>
-                            <Image Width="40" Height="40" Source="{Binding CanvasViewModel.Thumbnail}"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </TabControl.DataTemplates>
-                <TabControl.ContentTemplate>
-                    <DataTemplate DataType="{x:Type vm:ImageTabViewModel}"/>
-                </TabControl.ContentTemplate>
-            </TabControl>
+        <Border BorderThickness="0,0,0,1" BorderBrush="Black" Grid.Row="0" Grid.ColumnSpan="3">
+            <Grid Background="#101010" ColumnDefinitions="Auto,*" RowDefinitions="Auto, Auto, Auto">
+                <Menu>
+                    <MenuItem Header="File">
+                        <MenuItem Header="New" Command="{Binding NewCommand}"/>
+                        <MenuItem Header="Open" Command="{Binding OpenCommand}"/>
+                        <MenuItem Header="Save" Command="{Binding SaveCommand}"/>
+                        <MenuItem Header="Save As" Command="{Binding SaveAsCommand}"/>
+                        <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>
+                    </MenuItem>
+                    <MenuItem Header="Edit">
+                        <MenuItem Header="Undo" Command="{Binding UndoCommand}"/>
+                        <MenuItem Header="Redo" Command="{Binding RedoCommand}"/>
+                        <MenuItem Header="Cut" Command="{Binding CutCommand}"/>
+                        <MenuItem Header="Copy" Command="{Binding CopyCommand}"/>
+                        <MenuItem Header="Paste" Command="{Binding PasteCommand}"/>
+                        <MenuItem Header="Delete" Command="{Binding DeleteCommand}"/>
+                        <MenuItem Header="Select All" Command="{Binding SelectAllCommand}"/>
+                    </MenuItem>
+                </Menu>
+            
+                <TabControl Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" ItemsSource="{Binding ImageTabs}" SelectedItem="{Binding ActiveImageTab, Mode=TwoWay}">
+                    <TabControl.DataTemplates>
+                        <DataTemplate DataType="{x:Type vm:ImageTabViewModel}">
+                            <StackPanel Orientation="Vertical">
+                                <Button Classes="FlatButton" Content="X" Command="{Binding CloseTabCommand}" CommandParameter="{Binding}"/>
+                                <Image Width="40" Height="40" Source="{Binding CanvasViewModel.Thumbnail}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </TabControl.DataTemplates>
+                    <TabControl.ContentTemplate>
+                        <DataTemplate DataType="{x:Type vm:ImageTabViewModel}"/>
+                    </TabControl.ContentTemplate>
+                </TabControl>
 
-            
-            <!-- Top bar -->
-            <StackPanel Margin="0, 0, 0, 2" Height="35" Orientation="Horizontal" Grid.Row="1" Grid.Column="0" x:Name="TopToolBar">
-                <Button Classes="FlatButton" FontSize="20" Height="35" Width="35" Command="{Binding NewCommand}" Content="New" avalonia:Attached.Icon="fa-solid fa-file"/>
-                <Button Classes="FlatButton" FontSize="20" Height="35" Width="35" Command="{Binding OpenCommand}" Content="Open" avalonia:Attached.Icon="fa-solid fa-folder-open"/>
-                <Button Classes="FlatButton" FontSize="20" Height="35" Width="35" Command="{Binding SaveCommand}" Content="Save" avalonia:Attached.Icon="fa-solid fa-floppy-disk"/>
-                <Button Classes="FlatButton" FontSize="20" Height="35" Width="35" Command="{Binding SaveAsCommand}" Content="Save As" avalonia:Attached.Icon="fa-solid fa-file-export"/>
-                <Button Classes="FlatButton" FontSize="20" Height="35" Width="35" Command="{Binding UndoCommand}" Content="Undo" avalonia:Attached.Icon="fa-solid fa-rotate-left"/>
-                <Button Classes="FlatButton" FontSize="20" Height="35" Width="35" Command="{Binding RedoCommand}" Content="Redo" avalonia:Attached.Icon="fa-solid fa-rotate-right"/>
-                <Button Classes="FlatButton" FontSize="20" Height="35" Width="35" Command="{Binding CutCommand}" Content="Cut" avalonia:Attached.Icon="fa-solid fa-scissors"/>
-                <Button Classes="FlatButton" FontSize="20" Height="35" Width="35" Command="{Binding CopyCommand}" Content="Copy" avalonia:Attached.Icon="fa-solid fa-copy"/>
-                <Button Classes="FlatButton" FontSize="20" Height="35" Width="35" Command="{Binding PasteCommand}" Content="Paste" avalonia:Attached.Icon="fa-solid fa-clipboard"/>
-                <Button Classes="FlatButton" FontSize="20" Height="35" Width="35" Command="{Binding DeleteCommand}" Content="Delete" avalonia:Attached.Icon="fa-solid fa-xmark"/>
-                <Button Classes="FlatButton" FontSize="20" Height="35" Width="35" Command="{Binding SelectAllCommand}" Content="Select All" avalonia:Attached.Icon="fa-solid fa-object-group"/>
-            </StackPanel>
-            
-            <!-- Top sub bar -->
-            <StackPanel Height="35" Orientation="Horizontal" Grid.Row="2" Grid.Column="0">
-                <TextBlock Text="Tool:" VerticalAlignment="Center"/>
-                <ComboBox Margin="5 0 0 5" Width="100" ItemsSource="{Binding Tools}" SelectedItem="{Binding ToolManager.CurrentTool, Mode=TwoWay, FallbackValue={x:Static tools:PencilTool.Name}}" DisplayMemberBinding="{Binding CurrentToolName}"></ComboBox>
-                <TextBlock Text="Size:"></TextBlock>
-                <TextBox Margin="5 0 0 5" Width="50" Text="{Binding ActiveImageTab.CanvasViewModel.GlobalCurrentToolSize, Mode=TwoWay}"></TextBox>
-            </StackPanel>
-        </Grid>
+                
+                <!-- Top bar -->
+                <StackPanel Margin="0, 0, 0, 2" Height="35" Orientation="Horizontal" Grid.Row="1" Grid.Column="0" x:Name="TopToolBar">
+                    <Button Classes="FlatButton" FontSize="20" Height="35" Width="35" Command="{Binding NewCommand}" Content="New" avalonia:Attached.Icon="fa-solid fa-file"/>
+                    <Button Classes="FlatButton" FontSize="20" Height="35" Width="35" Command="{Binding OpenCommand}" Content="Open" avalonia:Attached.Icon="fa-solid fa-folder-open"/>
+                    <Button Classes="FlatButton" FontSize="20" Height="35" Width="35" Command="{Binding SaveCommand}" Content="Save" avalonia:Attached.Icon="fa-solid fa-floppy-disk"/>
+                    <Button Classes="FlatButton" FontSize="20" Height="35" Width="35" Command="{Binding SaveAsCommand}" Content="Save As" avalonia:Attached.Icon="fa-solid fa-file-export"/>
+                    <Button Classes="FlatButton" FontSize="20" Height="35" Width="35" Command="{Binding UndoCommand}" Content="Undo" avalonia:Attached.Icon="fa-solid fa-rotate-left"/>
+                    <Button Classes="FlatButton" FontSize="20" Height="35" Width="35" Command="{Binding RedoCommand}" Content="Redo" avalonia:Attached.Icon="fa-solid fa-rotate-right"/>
+                    <Button Classes="FlatButton" FontSize="20" Height="35" Width="35" Command="{Binding CutCommand}" Content="Cut" avalonia:Attached.Icon="fa-solid fa-scissors"/>
+                    <Button Classes="FlatButton" FontSize="20" Height="35" Width="35" Command="{Binding CopyCommand}" Content="Copy" avalonia:Attached.Icon="fa-solid fa-copy"/>
+                    <Button Classes="FlatButton" FontSize="20" Height="35" Width="35" Command="{Binding PasteCommand}" Content="Paste" avalonia:Attached.Icon="fa-solid fa-clipboard"/>
+                    <Button Classes="FlatButton" FontSize="20" Height="35" Width="35" Command="{Binding DeleteCommand}" Content="Delete" avalonia:Attached.Icon="fa-solid fa-xmark"/>
+                    <Button Classes="FlatButton" FontSize="20" Height="35" Width="35" Command="{Binding SelectAllCommand}" Content="Select All" avalonia:Attached.Icon="fa-solid fa-object-group"/>
+                </StackPanel>
+                
+                <!-- Top sub bar -->
+                <StackPanel Background="#101010" Height="35" Orientation="Horizontal" Grid.Row="2" Grid.Column="0">
+                    <TextBlock Text="Tool:" VerticalAlignment="Center"/>
+                    <ComboBox Margin="5 0 0 5" Width="100" ItemsSource="{Binding Tools}" SelectedItem="{Binding ToolManager.CurrentTool, Mode=TwoWay, FallbackValue={x:Static tools:PencilTool.Name}}" DisplayMemberBinding="{Binding CurrentToolName}"></ComboBox>
+                    <TextBlock Text="Size:"></TextBlock>
+                    <TextBox Margin="5 0 0 5" Width="50" Text="{Binding ActiveImageTab.CanvasViewModel.GlobalCurrentToolSize, Mode=TwoWay}"></TextBox>
+                </StackPanel>
+            </Grid>
+        </Border>
         
         <!-- Left bar -->
-        <StackPanel Width="25" Orientation="Vertical" Grid.Row="3" Grid.Column="0">
-            <Button Classes="FlatButton" FontSize="20" Width="35" Height="35" avalonia:Attached.Icon="{x:Static tools:PencilTool.Icon}" Command="{Binding SelectToolCommand}" CommandParameter="{x:Static tools:PencilTool.Name}"/>
-            <Button Classes="FlatButton" FontSize="20" Width="35" Height="35" avalonia:Attached.Icon="{x:Static tools:BrushTool.Icon}" Command="{Binding SelectToolCommand}" CommandParameter="{x:Static tools:BrushTool.Name}"/>
-            <Button Classes="FlatButton" FontSize="20" Width="35" Height="35" avalonia:Attached.Icon="{x:Static tools:EraserTool.Icon}" Command="{Binding SelectToolCommand}" CommandParameter="{x:Static tools:EraserTool.Name}"/>
-            <Button Classes="FlatButton" FontSize="20" Width="35" Height="35" avalonia:Attached.Icon="fa-regular fa-square"/>
-            <Button Classes="FlatButton" FontSize="20" Width="35" Height="35" avalonia:Attached.Icon="fa-solid fa-up-down-left-right"/>
-        </StackPanel>
+        <Border BorderThickness="0,0,1,0" BorderBrush="Black" Grid.Row="3" Grid.Column="0">
+            <StackPanel Width="35" Orientation="Vertical">
+                <Button Classes="FlatButton" FontSize="20" Width="35" Height="35" avalonia:Attached.Icon="{x:Static tools:PencilTool.Icon}" Command="{Binding SelectToolCommand}" CommandParameter="{x:Static tools:PencilTool.Name}"/>
+                <Button Classes="FlatButton" FontSize="20" Width="35" Height="35" avalonia:Attached.Icon="{x:Static tools:BrushTool.Icon}" Command="{Binding SelectToolCommand}" CommandParameter="{x:Static tools:BrushTool.Name}"/>
+                <Button Classes="FlatButton" FontSize="20" Width="35" Height="35" avalonia:Attached.Icon="{x:Static tools:EraserTool.Icon}" Command="{Binding SelectToolCommand}" CommandParameter="{x:Static tools:EraserTool.Name}"/>
+                <Button Classes="FlatButton" FontSize="20" Width="35" Height="35" avalonia:Attached.Icon="fa-regular fa-square"/>
+                <Button Classes="FlatButton" FontSize="20" Width="35" Height="35" avalonia:Attached.Icon="fa-solid fa-up-down-left-right"/>
+            </StackPanel>
+        </Border>
         
         <!-- Right bar -->
-        <StackPanel Background="#404040" Width="180" Orientation="Vertical" Grid.Row="3" Grid.Column="2">
-            <controls:ColorWheel Width="120" Height="200" PrimaryColor="{Binding ActiveImageTab.CanvasViewModel.CurrentGlobalColor, Mode=TwoWay}"></controls:ColorWheel>
-            <controls:LayersPane DataContext="{Binding ActiveImageTab.LayersPaneVm}"></controls:LayersPane>
-        </StackPanel>
+        <Border BorderThickness="1,0,0,0" BorderBrush="Black" Grid.Row="3" Grid.Column="2">
+            <StackPanel Background="#202020" Width="180" Orientation="Vertical">
+                <controls:ColorWheel Width="120" Height="200" PrimaryColor="{Binding ActiveImageTab.CanvasViewModel.CurrentGlobalColor, Mode=TwoWay}"></controls:ColorWheel>
+                <controls:LayersPane DataContext="{Binding ActiveImageTab.LayersPaneVm}"></controls:LayersPane>
+            </StackPanel>
+        </Border>
 
-        <TabControl Grid.Row="3" Grid.Column="1" ItemsSource="{Binding ImageTabs}" SelectedItem="{Binding ActiveImageTab, Mode=TwoWay}">
-            <TabControl.Styles>
-                <Style Selector="TabItem">
-                    <Setter Property="MinHeight" Value="0"/>
-                    <Setter Property="MinWidth" Value="0"/>
-                    <Setter Property="Padding" Value="0"/>
-                </Style>
-            </TabControl.Styles>
-            <TabControl.DataTemplates>
-                <DataTemplate DataType="{x:Type vm:ImageTabViewModel}">
-                    <TextBlock Text="{Binding Title}" Width="0" Height="0"/>
-                </DataTemplate>
-            </TabControl.DataTemplates>
-            <TabControl.ContentTemplate>
+        <Carousel Background="#303030" Grid.Row="3" Grid.Column="1" ItemsSource="{Binding ImageTabs}" SelectedItem="{Binding ActiveImageTab, Mode=TwoWay}">
+            <Carousel.DataTemplates>
                 <DataTemplate DataType="{x:Type vm:ImageTabViewModel}">
                     <controls:ImageTab />
                 </DataTemplate>
-            </TabControl.ContentTemplate>
-        </TabControl>
+            </Carousel.DataTemplates>
+        </Carousel>
 
         
         <!-- Bottom bar -->
-        <StackPanel Height="35" Orientation="Horizontal" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2">
+        <StackPanel Background="#101010" Height="25" Orientation="Horizontal" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3">
         </StackPanel>
     </Grid>
 </Window>

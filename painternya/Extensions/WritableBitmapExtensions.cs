@@ -1,4 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using Avalonia;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
 
 namespace painternya.Extensions;
@@ -8,13 +12,14 @@ public static class WriteableBitmapExtensions
     public static void Clear(this WriteableBitmap bitmap, Avalonia.Media.Color color)
     {
         using var context = bitmap.Lock();
-        for (int y = 0; y < context.Size.Height; y++)
+        int numPixels = context.Size.Width * context.Size.Height;
+        int[] colorData = new int[numPixels];
+        int colorValue = color.ToArgb();  // Assumes bitmap is in ARGB format
+        for (int i = 0; i < numPixels; i++)
         {
-            for (int x = 0; x < context.Size.Width; x++)
-            {
-                context.SetPixel(x, y, color);
-            }
+            colorData[i] = colorValue;
         }
+        Marshal.Copy(colorData, 0, context.Address, numPixels);
     }
     
     public static void SetPixel(this WriteableBitmap bitmap, int x, int y, Avalonia.Media.Color color)
@@ -22,6 +27,18 @@ public static class WriteableBitmapExtensions
         using var context = bitmap.Lock();
         context.SetPixel(x, y, color);
     }
+    
+    public static void SetPixels(this WriteableBitmap bitmap, Dictionary<Point, Color> pixels)
+    {
+        using var context = bitmap.Lock();
+        foreach (var pixel in pixels)
+        {
+            var (x, y) = pixel.Key;
+            var color = pixel.Value;
+            context.SetPixel((int)x, (int)y, color);
+        }
+    }
+
     
     public static void Clone(this WriteableBitmap destination, WriteableBitmap source)
     {

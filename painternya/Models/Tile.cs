@@ -1,3 +1,5 @@
+using System;
+using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
@@ -34,5 +36,10 @@ public class Tile
         
         IsVisible = true;
         Dirty = false;
+    }
+
+    public void SetBitmap(WriteableBitmap bitmap)
+    {
+        Bitmap = bitmap;
     }
 }

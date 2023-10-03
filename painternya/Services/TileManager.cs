@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using Avalonia;
 using Avalonia.Media;
@@ -10,7 +11,7 @@ namespace painternya.Services
 {
     public class TileManager
     {
-        private Tile[,] _tiles;
+        private readonly Dictionary<Point, Tile> _tiles = new();
         private readonly OrderedDictionary _loadedTiles = new();
         private readonly int _maxLoadedTiles;
         
@@ -35,7 +36,7 @@ namespace painternya.Services
         {
             foreach (var tile in _tiles)
             {
-                (tile).Bitmap.Clear(color);
+                tile.Value.Bitmap.Clear(color);
             }
         }
         
@@ -49,7 +50,7 @@ namespace painternya.Services
             }
         }
         
-        public Tile[,] GetAllTiles()
+        public Dictionary<Point,Tile> GetAllTiles()
         {
             return _tiles;
         }
@@ -59,8 +60,6 @@ namespace painternya.Services
             int tilesInWidth = (int)Math.Ceiling((double)totalWidth / TileSize);
             int tilesInHeight = (int)Math.Ceiling((double)totalHeight / TileSize);
 
-            _tiles = new Tile[tilesInWidth, tilesInHeight];
-
             for (var x = 0; x < tilesInWidth; x++)
             {
                 for (var y = 0; y < tilesInHeight; y++)
@@ -68,48 +67,54 @@ namespace painternya.Services
                     int tileWidth = (x == tilesInWidth - 1 && totalWidth % TileSize != 0) ? totalWidth % TileSize : TileSize;
                     int tileHeight = (y == tilesInHeight - 1 && totalHeight % TileSize != 0) ? totalHeight % TileSize : TileSize;
 
-                    _tiles[x, y] = new Tile(tileWidth, tileHeight);
-                    _tiles[x, y].X = x;
-                    _tiles[x, y].Y = y;
-                    _tiles[x, y].Dirty = true;
+                    var tile = new Tile(tileWidth, tileHeight) { X = x, Y = y, Dirty = true };
+                    _tiles[new Point(x, y)] = tile;
                 }
             }
         }
         
         public RenderTargetBitmap CaptureThumbnail()
         {
-            var fullSize = new RenderTargetBitmap(new PixelSize(_tiles.GetLength(0) * TileSize, _tiles.GetLength(1) * TileSize));
+            var fullSize = new RenderTargetBitmap(new PixelSize(_tiles.Count * TileSize, _tiles.Count * TileSize));
 
             using (var ctx = fullSize.CreateDrawingContext())
             {
-                for (int x = 0; x < _tiles.GetLength(0); x++)
+                foreach (var kvp in _tiles)
                 {
-                    for (int y = 0; y < _tiles.GetLength(1); y++)
-                    {
-                        ctx.DrawImage(_tiles[x, y].Bitmap, new Rect(x * TileSize, y * TileSize, TileSize, TileSize));
-                    }
+                    var point = kvp.Key;
+                    var tile = kvp.Value;
+                    ctx.DrawImage(tile.Bitmap, new Rect(point.X * TileSize, point.Y * TileSize, TileSize, TileSize));
                 }
             }
-            
+    
             return fullSize;
         }
         
         public Tile GetTile(int x, int y)
         {
-            if (_tiles[x, y] == null)
+            var key = new Point(x, y);
+            if (!_tiles.TryGetValue(key, out var tile))
             {
-                _tiles[x, y] = new Tile(TileSize, TileSize);
+                tile = new Tile(TileSize, TileSize);
+                _tiles[key] = tile;
             }
-            
-            var tile = _tiles[x, y];
-            var key = (x, y);
-            
-            if (!_loadedTiles.Contains(key))
-            {
-                _loadedTiles.Add(key, tile);
-            }
-            
             return tile;
         }
+        
+        public void SetBitmapToTile(int tileX, int tileY, WriteableBitmap bitmap)
+        {
+            // Verify bitmap is of appropriate size for a tile, or resize/crop as needed.
+            // ...
+
+            // Get the tile at tileX, tileY.
+            Tile tile = GetTile(tileX, tileY);
+
+            // Now, assuming Tile has a method/property to accept a bitmap, set it.
+            tile.SetBitmap(bitmap); // This method must be implemented in your Tile class.
+
+            // If needed, mark this tile as dirty to ensure it is redrawn.
+            MarkTileDirty(tileX, tileY);
+        }
+
     }
 }

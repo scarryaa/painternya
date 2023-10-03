@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Media;
@@ -27,6 +28,7 @@ public class DrawingContext
     private int _totalHeight;
     private readonly Subject<Unit> _drawingChangedSubject;
     private readonly IOffsetObserver _observer;
+    private RenderTargetBitmap renderTargetBitmap;
     private Vector _viewport;
     
     private double OffsetX { get; set; }
@@ -67,6 +69,7 @@ public class DrawingContext
 
     public DrawingContext(LayerManager layerManager, IOffsetObserver offsetObserver, int totalWidth, int totalHeight)
     {
+        renderTargetBitmap = new RenderTargetBitmap(new PixelSize(totalWidth, totalHeight));
         _layerManager = layerManager;
         _thumbnailCapturer = new ThumbnailCapturer(CurrentTileManager, totalWidth, totalHeight);
         
@@ -151,14 +154,12 @@ public class DrawingContext
             }
         }
         
-        BatchDraw();
+        Task.Run(BatchDraw);
     }
     
     public void BatchDraw()
     {
         if (_drawBuffer.Count == 0) return;
-
-        var renderTargetBitmap = new RenderTargetBitmap(new PixelSize(_totalWidth, _totalHeight), new Vector(96, 96));
 
         using (var context = renderTargetBitmap.CreateDrawingContext())
         {
@@ -170,90 +171,59 @@ public class DrawingContext
 
         _drawBuffer.Clear();
         OffscreenBitmap = renderTargetBitmap;
-
+        
         _drawingChangedSubject.OnNext(Unit.Default);
     }
 
     private void RenderPoint(Avalonia.Media.DrawingContext context, Point point, Color color, int thickness)
     {
+        var pixelsToChange = new Dictionary<Point, Color>();
         int radius = thickness / 2;
         int squaredRadius = radius * radius;
 
         int x = (int)point.X;
         int y = (int)point.Y;
-    
-        for (int offsetX = -radius; offsetX <= radius; offsetX++)
+
+        if (!IsPointInsideCanvas(x, y))
         {
-            for (int offsetY = -radius; offsetY <= radius; offsetY++)
+            return;
+        }
+
+        int minOffsetX = Math.Max(-radius, -x);
+        int maxOffsetX = Math.Min(radius, _totalWidth - 1 - x);
+        int minOffsetY = Math.Max(-radius, -y);
+        int maxOffsetY = Math.Min(radius, _totalHeight - 1 - y);
+
+        for (int offsetX = minOffsetX; offsetX <= maxOffsetX; offsetX++)
+        {
+            for (int offsetY = minOffsetY; offsetY <= maxOffsetY; offsetY++)
             {
-                if (offsetX * offsetX + offsetY * offsetY <= squaredRadius) 
+                if (offsetX * offsetX + offsetY * offsetY <= squaredRadius)
                 {
                     int absoluteX = x + offsetX;
                     int absoluteY = y + offsetY;
-                    
-                    if (!IsPointInsideCanvas(absoluteX, absoluteY))
-                    {
-                        continue;
-                    }
 
                     int tileX = absoluteX / TileManager.TileSize;
                     int tileY = absoluteY / TileManager.TileSize;
-                
+
                     if (LayerManager.ActiveLayer == null)
                         return;
-                    
+
                     var tile = CurrentTileManager.GetTile(tileX, tileY);
-                
+
                     int pixelX = absoluteX % TileManager.TileSize;
                     int pixelY = absoluteY % TileManager.TileSize;
 
-                    tile.Bitmap.SetPixel(pixelX, pixelY, color);
+                    pixelsToChange[new Point(pixelX, pixelY)] = color;
                     tile.Dirty = true;
                 }
             }
         }
+        
+        var affectedTile = CurrentTileManager.GetTile(x / TileManager.TileSize, y / TileManager.TileSize);
+        affectedTile.Bitmap.SetPixels(pixelsToChange);
     }
 
-
-    public void SetPixel(Point point, Color color, int thickness = 1)
-    {
-        int radius = thickness / 2;
-        int squaredRadius = radius * radius;
-
-        int x = (int)point.X;
-        int y = (int)point.Y;
-    
-        for (int offsetX = -radius; offsetX <= radius; offsetX++)
-        {
-            for (int offsetY = -radius; offsetY <= radius; offsetY++)
-            {
-                if (offsetX * offsetX + offsetY * offsetY <= squaredRadius) 
-                {
-                    int absoluteX = x + offsetX;
-                    int absoluteY = y + offsetY;
-                    
-                    if (!IsPointInsideCanvas(absoluteX, absoluteY))
-                    {
-                        continue;
-                    }
-
-                    int tileX = absoluteX / TileManager.TileSize;
-                    int tileY = absoluteY / TileManager.TileSize;
-                
-                    if (LayerManager.ActiveLayer == null)
-                        return;
-                    
-                    var tile = CurrentTileManager.GetTile(tileX, tileY);
-                
-                    int pixelX = absoluteX % TileManager.TileSize;
-                    int pixelY = absoluteY % TileManager.TileSize;
-
-                    tile.Bitmap.SetPixel(pixelX, pixelY, color);
-                    tile.Dirty = true;
-                }
-            }
-        }
-    }
 
     public void Execute(DrawLineAction lineAction)
     {

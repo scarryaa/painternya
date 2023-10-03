@@ -1,7 +1,9 @@
 using System;
+using System.IO;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using painternya.Models;
 using painternya.Services;
 using painternya.ViewModels;
@@ -11,6 +13,7 @@ namespace painternya.Controls
 {
     public partial class Canvas : UserControl
     {
+        private WriteableBitmap _checkerboardBitmap;
         private int _canvasWidth;
         private int _canvasHeight;
         private SolidColorBrush _darkSquareBrush = new SolidColorBrush(Color.FromRgb(204, 204, 204));
@@ -75,23 +78,43 @@ namespace painternya.Controls
             RenderLayer(ViewModel.DrawingContext.LayerManager.PreviewLayer, context);
         }
 
-        private void DrawCheckerboardBackground(DrawingContext context)
+        private async void DrawCheckerboardBackground(DrawingContext context)
         {
-            // Determine square size from canvas size
-            int squareSize = (int)Width / 10;
-            int horizontalSquares = (int)Math.Ceiling(Width / (double)squareSize);
-            int verticalSquares = (int)Math.Ceiling(Height / (double)squareSize);
-            var rect = new Rect(0, 0, squareSize, squareSize);
-
-            for (int i = 0; i < horizontalSquares; i++)
+            if (_checkerboardBitmap == null)
             {
-                for (int j = 0; j < verticalSquares; j++)
+                int squareSize = (int)Width / 100;
+                int horizontalSquares = (int)Math.Ceiling(Width / (double)squareSize);
+                int verticalSquares = (int)Math.Ceiling(Height / (double)squareSize);
+        
+                var renderTargetBitmap = new RenderTargetBitmap(
+                    new PixelSize(horizontalSquares * squareSize, verticalSquares * squareSize),
+                    new Vector(96, 96));
+
+                using (var bmpContext = renderTargetBitmap.CreateDrawingContext())
                 {
-                    var currentBrush = ((i + j) % 2 == 0) ? _lightSquareBrush : _darkSquareBrush;
-                    rect = rect.WithX(i * squareSize).WithY(j * squareSize);
-                    context.FillRectangle(currentBrush, rect);
+                    var rect = new Rect(0, 0, squareSize, squareSize);
+
+                    for (int i = 0; i < horizontalSquares; i++)
+                    {
+                        for (int j = 0; j < verticalSquares; j++)
+                        {
+                            var currentBrush = ((i + j) % 2 == 0) ? _lightSquareBrush : _darkSquareBrush;
+                            rect = rect.WithX(i * squareSize).WithY(j * squareSize);
+                            bmpContext.FillRectangle(currentBrush, rect);
+                        }
+                    }
+                }
+                
+                using (var stream = new MemoryStream())
+                {
+                    renderTargetBitmap.Save(stream);
+                    stream.Position = 0;
+                    
+                    _checkerboardBitmap = WriteableBitmap.Decode(stream);
                 }
             }
+
+            context.DrawImage(_checkerboardBitmap, new Rect(0, 0, _checkerboardBitmap.PixelSize.Width, _checkerboardBitmap.PixelSize.Height), new Rect(0, 0, Width, Height));
         }
         
         public void InvalidateCanvas()
@@ -102,9 +125,11 @@ namespace painternya.Controls
         private void RenderLayer(Layer layer, DrawingContext context)
         {
             if (!layer.IsVisible) return;
-            
-            foreach (var tile in layer.TileManager.GetAllTiles())
+
+            var tiles = layer.TileManager.GetAllTiles();
+            foreach (var kvp in tiles)
             {
+                var tile = kvp.Value;
                 if (!tile.Dirty || !tile.IsVisible) continue;
                 var sourceWidth = tile.Width;
                 var sourceHeight = tile.Height;

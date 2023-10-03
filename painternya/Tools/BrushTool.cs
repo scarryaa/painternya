@@ -51,7 +51,6 @@ public class BrushTool : ITool
     public void OnPointerReleased(LayerManager layerManager, DrawingContext drawingContext, Point point)
     {
         layerManager.SetActiveLayer(ActiveLayer);
-        
         if (AccumulatedPoints.Count > 1)
         {
             LastPoint = AccumulatedPoints[0];
