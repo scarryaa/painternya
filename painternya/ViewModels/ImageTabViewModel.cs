@@ -13,6 +13,7 @@ namespace painternya.ViewModels;
 
 public class ImageTabViewModel : ViewModelBase
 {
+    private ScrollViewer? _scrollViewer;
     public string LastActiveLayerId { get; set; }
     private Bitmap? _thumbnail => CanvasViewModel.Thumbnail;
     private LayersPaneViewModel? _layersPaneVm;
@@ -87,8 +88,7 @@ public class ImageTabViewModel : ViewModelBase
     {
         if (CanvasViewModel.IsActive == false) return;
         
-        double oldZoom = Zoom;
-        
+        var oldZoom = Zoom;
         double zoomFactor = args.Delta > 0 ? 1.01 : 0.99;
 
         Zoom *= zoomFactor;
@@ -96,8 +96,15 @@ public class ImageTabViewModel : ViewModelBase
         if (Zoom < 0.1) Zoom = 0.1;
         if (Zoom > 10) Zoom = 10;
 
-        TranslateX = (args.Position.X + TranslateX) * zoomFactor - args.Position.X;
-        TranslateY = (args.Position.Y + TranslateY) * zoomFactor - args.Position.Y;
+        var preZoomMouseContentX = (args.Position.X + TranslateX) / oldZoom;
+        var preZoomMouseContentY = (args.Position.Y + TranslateY) / oldZoom;
+
+        var postZoomMouseContentX = preZoomMouseContentX * Zoom;
+        var postZoomMouseContentY = preZoomMouseContentY * Zoom;
+
+        TranslateX = postZoomMouseContentX - args.Position.X;
+        TranslateY = postZoomMouseContentY - args.Position.Y;
+
         CanvasViewModel.Offset = new Vector(TranslateX, TranslateY);
         CanvasViewModel.DrawingContext.Zoom = Zoom;
         CanvasViewModel.DrawingContext.Viewport = Viewport;
@@ -106,14 +113,18 @@ public class ImageTabViewModel : ViewModelBase
     private void Scrolled(object sender)
     {
         if (CanvasViewModel.IsActive == false) return;
-        
-        var scrollViewer = sender as ScrollViewer;
-        if (scrollViewer == null) return;
+
+        _scrollViewer = sender as ScrollViewer;
+        if (_scrollViewer == null) return;
 
         if (CanvasViewModel == null) return;
         
-        CanvasViewModel.OffsetX = scrollViewer.Offset.X;
-        CanvasViewModel.OffsetY = scrollViewer.Offset.Y;
+        CanvasViewModel.OffsetX = _scrollViewer.Offset.X;
+        CanvasViewModel.OffsetY = _scrollViewer.Offset.Y;
+        CanvasViewModel.Offset = new Vector(_scrollViewer.Offset.X, _scrollViewer.Offset.Y);
+        
+        TranslateX = _scrollViewer.Offset.X;
+        TranslateY = _scrollViewer.Offset.Y;
     }
     
     

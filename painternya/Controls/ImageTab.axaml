@@ -12,7 +12,8 @@
     <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible"
                   behaviors:ScrollViewerScrollChangedBehavior.Command="{Binding ScrolledCommand}"
                   Offset="{Binding CanvasViewModel.Offset, Mode=TwoWay}"
-                  Viewport="{Binding Viewport, Mode=OneTime}">
+                  Viewport="{Binding Viewport, Mode=OneTime}"
+                  behaviors:PointerWheelChangedBehavior.Command="{Binding ZoomCommand}">
         <LayoutTransformControl>
             <LayoutTransformControl.LayoutTransform>
                 <TransformGroup>
@@ -20,7 +21,7 @@
                 </TransformGroup>
             </LayoutTransformControl.LayoutTransform>
 
-            <Border behaviors:PointerWheelChangedBehavior.Command="{Binding ZoomCommand}">
+            <Border>
                 <controls:Canvas DataContext="{Binding CanvasViewModel}"></controls:Canvas>
             </Border>
         </LayoutTransformControl>

@@ -1,9 +1,12 @@
 using System;
+using System.Linq;
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.LogicalTree;
 using painternya.Models;
+using Canvas = painternya.Controls.Canvas;
 
 namespace painternya.Behaviors;
 
@@ -32,11 +35,12 @@ public class PointerWheelChangedBehavior
             {
                 if (args.KeyModifiers == KeyModifiers.Control)
                 {
+                    args.Handled = true;
                     // Calculate the zoom factor based on wheel direction.
                     double zoomFactor = args.Delta.Y;
                 
                     // Get the position relative to the content inside the ScrollViewer.
-                    var positionRelativeToContent = args.GetPosition(sender as Visual);
+                    var positionRelativeToContent = args.GetPosition((sender as Control).GetLogicalChildren().OfType<Canvas>().FirstOrDefault());
                 
                     newCommand.Execute(new PointerWheelChangedArgs(zoomFactor, positionRelativeToContent, true, false));
                 }

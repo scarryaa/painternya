@@ -54,7 +54,7 @@ namespace painternya.Controls
             var radius = 70;
             var center = new Point(size.Width / 2 + 15, size.Height / 2);
 
-            for (double angle = 0; angle < 360; angle += 1)
+            for (double angle = 0; angle < 360; angle += 0.5)
             {
                 var color = HsvToRgb(angle, 1, 1);
 

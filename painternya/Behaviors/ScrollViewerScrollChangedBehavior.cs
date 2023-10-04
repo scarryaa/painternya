@@ -33,7 +33,7 @@ public class ScrollViewerScrollChangedBehavior
         }
     }
 
-    private static void Control_ScrollChanged(object sender, EventArgs e)
+    private static void Control_ScrollChanged(object sender, ScrollChangedEventArgs e)
     {
         if (sender is ScrollViewer control && control.Tag is ICommand command)
         {

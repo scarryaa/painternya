@@ -20,7 +20,7 @@ namespace painternya.Tools
 
         public PencilTool(int size)
         {
-            Size = size;
+            Size = 1;
         }
         
         public void OnPointerPressed(LayerManager layerManager, DrawingContext drawingContext, Point point, int brushSize)
@@ -41,7 +41,7 @@ namespace painternya.Tools
         {
             AccumulatedPoints.Add(point);
             
-            drawingContext.DrawLine(LastPoint, point, drawingContext.CurrentColor, Size);
+            drawingContext.DrawLine(LastPoint, point, drawingContext.CurrentColor, 1);
             
             LastPoint = point;
         }
@@ -52,7 +52,7 @@ namespace painternya.Tools
             if (AccumulatedPoints.Count > 1)
             {
                 LastPoint = AccumulatedPoints[0];
-                drawingContext.DrawLine(LastPoint, AccumulatedPoints, drawingContext.CurrentColor, Size);
+                drawingContext.DrawLine(LastPoint, AccumulatedPoints, drawingContext.CurrentColor, 1);
 
                 AccumulatedPoints.Clear();
                 layerManager.ClearPreviewLayer();
